@@ -5,14 +5,12 @@ def quatconjugate(q_in):
     """
     Function Description: quatconjugate.py computes the conjugate of a quaternion, or array of quaternions, defined as a N x 4 numpy array
 
-    Usage example: 
+    Usage example(s): 
     q_in = np.array([[0, 1, 0, 0],[0, 0, 1, 0]])
     q_conj = quatconjugate(q_in)
     
-    Source: "Quaternion kinematics for the error-state Kalman filter" by Joan Sola, pg. 8 (https://arxiv.org/pdf/1711.02508.pdf)
-
-    Author: Michael Higgins
-    Created: 2023-Nov-5
+    Source(s):
+    "Quaternion kinematics for the error-state Kalman filter" by Joan Sola, pg. 8 (https://arxiv.org/pdf/1711.02508.pdf)
     """
 
     # Input argument check
