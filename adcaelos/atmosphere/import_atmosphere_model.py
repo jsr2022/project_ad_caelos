@@ -12,7 +12,7 @@ def usaf1976model(file_name, path):
     path (string): path to file_names 
 
     Returns:
-    pandas dataframe: data organized with table headers by altitude
+    polars dataframe: data organized with table headers by altitude
     """
     pass
 
