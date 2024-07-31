@@ -75,3 +75,43 @@ def psiMat(psi):
     psiMatrix = np.array([[np.cos(psi), np.sin(psi), 0], [-1*np.sin(psi), np.cos(psi), 0], [0, 0, 1]])
 
     return psiMatrix
+
+def euler123(phi, theta, psi):
+    """
+    Function Description: Performs a 1-2-3 Euler Angle Rotation
+    Units: Radians 
+    Inputs: int, double, float etc. for each input (phi [1 x 1], theta [1 x 1], psi [1 x 1]) 
+    Output: np.array [3, 3]
+
+    Usage example(s):
+    euler123Mat = euler123(phi, theta, psi)
+    euler123Mat = euler123(np.pi/2, np.pi/6, np.pi/8)
+
+    Source(s):
+    "Modern Flight Dynamics" by Daniel K. Schmidt, pg. 9
+    """
+
+    if __name__ == "__main__":
+    
+        if np.shape(phi) != 1:
+            print("Input structure for phi is not 1 x 1")
+            exit(0)
+        
+        if np.shape(theta) != 1:
+            print("Input structure for theta is not 1 x 1")
+            exit(0)
+        
+        if np.shape(psi) != 1:
+            print("Input structure for psi is not 1 x 1")
+            exit(0)
+
+    phiMatrix = phiMat(phi)
+    thetaMatrix = thetaMat(theta)
+    psiMatrix = psiMat(psi)
+
+    intermediary =  np.matmul(phiMatrix, thetaMatrix)
+    euler123Mat = np.matmul(intermediary, psiMatrix)
+
+    return euler123Mat
+    
+    

@@ -10,6 +10,8 @@ if __name__ == "__main__":
     phiMatrix   = adcaelos.rotation.euler.phiMat(phi)
     thetaMatrix = adcaelos.rotation.euler.thetaMat(theta)
     psiMatrix   = adcaelos.rotation.euler.psiMat(psi)
+
+    euler123Matrix = adcaelos.rotation.euler.euler123(phi, theta, psi)
     
     print("phiMatrix")
     print(phiMatrix)
@@ -17,3 +19,5 @@ if __name__ == "__main__":
     print(thetaMatrix)
     print("psiMatrix")
     print(psiMatrix)
+    print("Euler123 Matrix")
+    print(euler123Matrix)
