@@ -3,6 +3,7 @@ import numpy as np
 class Component:
     
     def __init__(self, UUID: int, hasControl: bool = False):
+        #Note to self, I don't think having hasControl is a worthwhile boolean
         self.UUID = UUID
 
     def getStatesDot(self, currState: np.array, currTime: float) -> np.array:
@@ -15,5 +16,4 @@ class Component:
         dy_dt = currState[0]*(rho - currState[2]) - currState[1]
         dz_dt = currState[0]*currState[1] - beta*currState[2]
         statesDot = np.array([dx_dt, dy_dt, dz_dt])
-        
         return statesDot

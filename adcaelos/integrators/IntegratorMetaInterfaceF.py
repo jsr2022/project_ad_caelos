@@ -8,14 +8,14 @@ from component.Component import Component
 class IntegratorMetaInterface(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass: type) -> bool:
-        return (hasattr(subclass, 'nextState') and
-                callable(subclass.nextState) and
+        return (hasattr(subclass, 'getNextState') and
+                callable(subclass.getNextState) and
                 hasattr(subclass, 'getIntegratorName') and
                 callable(subclass.getIntegratorName) or 
                 NotImplemented)
     
     @abc.abstractmethod
-    def nextState(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def getNextState(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
         """Returns the next state tied to the next time step
         Type: np.array"""
         raise NotImplementedError
