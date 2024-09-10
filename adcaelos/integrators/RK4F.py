@@ -54,28 +54,36 @@ class RK4(IntegratorMetaInterface):
     def __init__(self) -> None:
         self.name = "Runge Kutta 4 Integrator"
 
-    def getNextState(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def getNextState(self, fieldObject: Component, currTime: float, dt: float) -> np.array:
         """Returns the next state in the time series"""
-        ff1 = fieldObject.getStatesDot(currState, currState)
-        ff2 = self.f2(fieldObject, currState, currTime, dt)
-        ff3 = self.f3(fieldObject, currState, currTime, dt)
-        ff4 = self.f4(fieldObject, currState, currTime, dt)
+        currState = fieldObject.getCurrState()
+        currCntrl = fieldObject.getCurrCntrl()
+        ff1 = fieldObject.getStatesDot(currState, currCntrl, currTime)
+        ff2 = self.f2(fieldObject, currTime, dt)
+        ff3 = self.f3(fieldObject, currTime, dt)
+        ff4 = self.f4(fieldObject, currTime, dt)
         nextState = currState + dt/6*(ff1 + 2*ff2 + 2*ff3 + ff4)
         return nextState
     
-    def f2(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def f2(self, fieldObject: Component, currTime: float, dt: float) -> np.array:
         """Returns f2 Runge Kutta Approximation"""
-        ff2 = fieldObject.getStatesDot(currState + dt/2*fieldObject.getStatesDot(currState, currTime), currTime + dt/2)
+        currState = fieldObject.getCurrState()
+        currCntrl = fieldObject.getCurrCntrl()
+        ff2 = fieldObject.getStatesDot(currState + dt/2*fieldObject.getStatesDot(currState, currCntrl, currTime), currCntrl, currTime + dt/2)
         return ff2
 
-    def f3(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def f3(self, fieldObject: Component, currTime: float, dt: float) -> np.array:
         """Returns f3 Runge Kutta Approximation"""
-        ff3 = fieldObject.getStatesDot(currState + dt/2*self.f2(fieldObject, currState, currTime, dt), currTime + dt/2)
+        currState = fieldObject.getCurrState()
+        currCntrl = fieldObject.getCurrCntrl()
+        ff3 = fieldObject.getStatesDot(currState + dt/2*self.f2(fieldObject, currTime, dt), currCntrl, currTime + dt/2)
         return ff3
     
-    def f4(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def f4(self, fieldObject: Component, currTime: float, dt: float) -> np.array:
         """Returns f4 Runge Kutta Approximation"""
-        ff4 = fieldObject.getStatesDot(currState + dt*self.f3(fieldObject, currState, currTime, dt), currTime + dt)
+        currState = fieldObject.getCurrState()
+        currCntrl = fieldObject.getCurrCntrl()
+        ff4 = fieldObject.getStatesDot(currState + dt*self.f3(fieldObject, currTime, dt), currCntrl, currTime + dt)
         return ff4
 
     def getIntegratorName(self) -> str:

@@ -31,7 +31,7 @@ from components.ComponentF import Component
 
 class IntegratorMetaInterface(abc.ABC): #metaclass=abc.ABCMeta
     @abc.abstractmethod
-    def getNextState(self, fieldObject: Component, currState: np.array, currTime: float, dt: float) -> np.array:
+    def getNextState(self, fieldObject: Component, currTime: float, dt: float) -> np.array:
         """Returns the next state tied to the next time step"""
         raise NotImplementedError
     

@@ -2,11 +2,14 @@ import numpy as np
 
 class Component:
     
-    def __init__(self, UUID: int, hasControl: bool = False):
-        #Note to self, I don't think having hasControl is a worthwhile boolean
-        self.UUID = UUID
+    def __init__(self, UUID: int, numCntrl: int, initialCond: np.array) -> None:
+        self.UUID      = UUID
+        self.currState = initialCond
+        self.numCntrl  = numCntrl
+        self.currCntrl  = np.zeros(self.numCntrl)
+        
 
-    def getStatesDot(self, currState: np.array, currTime: float) -> np.array:
+    def getStatesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """Returns the Vector Field of the System.
         Type: np.array """
         rho = 28
@@ -17,3 +20,15 @@ class Component:
         dz_dt = currState[0]*currState[1] - beta*currState[2]
         statesDot = np.array([dx_dt, dy_dt, dz_dt])
         return statesDot
+    
+    def setCurrState(self, currState):
+        self.currState = currState
+
+    def getCurrState(self) -> np.array:
+        return self.currState
+    
+    def setCurrCntrl(self, currCntrl):
+        self.currCntrl = currCntrl
+
+    def getCurrCntrl(self) -> np.array:
+        return self.currCntrl
