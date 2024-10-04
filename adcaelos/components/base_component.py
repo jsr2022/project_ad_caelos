@@ -2,6 +2,7 @@
 #Imports:
 import numpy as np
 import uuid
+# from sys import exit
 from adcaelos.components.component_enums import Component_Enums
 class Base_Component:
 
@@ -24,5 +25,15 @@ class Base_Component:
     
     def getType(self) -> Component_Enums:
         return self.__type
+    
+    # def compareArraySize(self, currArray, priorArray) -> bool:
+    #     ndimPA = priorArray.ndim
+    #     ndimCA = currArray.ndim
+
+    #     if ndimPA == ndimCA:
+            
+    #     else:
+    #         print("Error: ")
+        
 
 
