@@ -1,24 +1,21 @@
 #truth_component.py
 from sys import exit
 import numpy as np
-from adcaelos.components.base_component import Base_Component
+from adcaelos.components.time_varying_component import Time_Varying_Component
 from adcaelos.components.component_enums import Component_Enums
 from adcaelos.integrators.integrator_enums import Integrator_Enums
 
-class Truth_Component(Base_Component):
+class Truth_Component(Time_Varying_Component):
 
-    def __init__(self, statePos2Names: dict, stateNames2Pos: dict, nextTime: float = -1, name: str = "Truth_Component", UUID: int = None, frequency: int = 100, integratorType: Integrator_Enums = Integrator_Enums.RK4) -> None:
-        super().__init__(Component_Enums.TRUTH_COMPONENT, name, UUID) 
+    def __init__(self, statePos2Names: dict, stateNames2Pos: dict, integratorType: Integrator_Enums = Integrator_Enums.RK4, nextTime: float = -1, frequency: int = 100, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
+        super().__init__(nextTime, frequency, Component_Enum, name, UUID) 
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
         self.__stateNames2Pos = stateNames2Pos #dictionary of keys (state names) to values (state indices in state vector) 
-        self.nextTime = nextTime
-        self.__frequency = frequency
-        self.__period = 1/frequency
         self.__integratorType = integratorType
 
     def __str__(self) -> str:
         msgStr = super().__str__()
-        msgStr = msgStr + f"\nFrequency: {self.getFrequency()} [Hz].\nIntegrator Type: {self.getIntegratorType()}"
+        msgStr = msgStr + f"\nIntegrator Type: {self.getIntegratorType()}"
         #ADD PRINTING OUT STATE NUMBER TO STATE NAME
         return msgStr
 
@@ -43,19 +40,6 @@ class Truth_Component(Base_Component):
         
     def setInitialCond(self, initialCond: np.array) -> None:
         self.setCurrState(initialCond)
-
-    def setNextTime(self) -> None:
-        currTime = self.getNextTime()
-        self.nextTime = currTime + self.getPeriod()
-    
-    def getNextTime(self) -> float:
-        return self.nextTime
-        
-    def getFrequency(self) -> int:
-        return self.__frequency
-    
-    def getPeriod(self) -> float:
-        return self.__period
 
     def getIntegratorType(self) -> Integrator_Enums:
         return self.__integratorType
