@@ -7,12 +7,13 @@ from adcaelos.integrators.integrator_enums import Integrator_Enums
 
 class Truth_Component(Base_Component):
 
-    def __init__(self, statePos2Names: dict, stateNames2Pos: dict, currTime: float = -1, name: str = "Truth_Component", UUID: int = None, frequency: int = 100, integratorType: Integrator_Enums = Integrator_Enums.RK4) -> None:
+    def __init__(self, statePos2Names: dict, stateNames2Pos: dict, nextTime: float = -1, name: str = "Truth_Component", UUID: int = None, frequency: int = 100, integratorType: Integrator_Enums = Integrator_Enums.RK4) -> None:
         super().__init__(Component_Enums.TRUTH_COMPONENT, name, UUID) 
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
         self.__stateNames2Pos = stateNames2Pos #dictionary of keys (state names) to values (state indices in state vector) 
-        self.currTime = currTime
+        self.nextTime = nextTime
         self.__frequency = frequency
+        self.__period = 1/frequency
         self.__integratorType = integratorType
 
     def __str__(self) -> str:
@@ -43,14 +44,18 @@ class Truth_Component(Base_Component):
     def setInitialCond(self, initialCond: np.array) -> None:
         self.setCurrState(initialCond)
 
-    def setCurrTime(self, currTime: float) -> None:
-        self.currTime = currTime
+    def setNextTime(self) -> None:
+        currTime = self.getNextTime()
+        self.nextTime = currTime + self.getPeriod()
     
-    def getCurrTime(self) -> float:
-        return self.currTime
+    def getNextTime(self) -> float:
+        return self.nextTime
         
     def getFrequency(self) -> int:
         return self.__frequency
+    
+    def getPeriod(self) -> float:
+        return self.__period
 
     def getIntegratorType(self) -> Integrator_Enums:
         return self.__integratorType
@@ -76,11 +81,7 @@ class Truth_Component(Base_Component):
     def getStateNames2Pos(self, indices = None):
         if indices is None:
             return np.array(list(self.__stateNames2Pos.values()))
-        elif isinstance(indices, str):
-            if indices not in self.__stateNames2Pos:
-                raise KeyError(f"Key {key} not found in dictionary")
-            return np.array(self.__stateNames2Pos[indices])
-        elif isinstance(indices, np.ndarray): #I am storing the string arrays in np arrays maybe a bad idea...
+        elif isinstance(indices, str): #I am storing the string arrays in array of strings
             statePos = []
             for key in indices:
                 if key not in self.__stateNames2Pos:
@@ -91,8 +92,8 @@ class Truth_Component(Base_Component):
             print("Error: Improper Key Type Not In Dictionary") #add indices type, also add to logger
             exit(1)  
     
-    def getUpdate(self) -> bool:
-        if np.mod(self.getCurrTime(), 1/self.getFrequency()) == 0:
-            return True
-        else:
-            return False
+    # def getUpdate(self) -> bool:
+    #     if np.mod(self.getCurrTime(), 1/self.getFrequency()) == 0:
+    #         return True
+    #     else:
+    #         return False
