@@ -1,6 +1,6 @@
 import numpy as np
-from integrators.IntegratorMetaInterfaceF import IntegratorMetaInterface
-from components.ComponentF import Component
+from IntegratorMetaInterfaceF import IntegratorMetaInterface
+from ComponentF import Component
 
 class RK4(IntegratorMetaInterface):
     

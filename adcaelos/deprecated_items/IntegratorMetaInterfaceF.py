@@ -1,6 +1,6 @@
 import abc
 import numpy as np
-from components.ComponentF import Component
+from ComponentF import Component
 
 class IntegratorMetaInterface(abc.ABC): #metaclass=abc.ABCMeta
     @abc.abstractmethod
