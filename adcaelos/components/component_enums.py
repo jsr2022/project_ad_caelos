@@ -6,6 +6,7 @@ class Component_Enums(Flag):
     BASE_COMPONENT           = auto()
     TRUTH_COMPONENT          = auto()
     LOGIC_COMPONENT          = auto()
+    CONTAINER_COMPONENT      = auto()
     OBJECT                   = auto()
     VEHICLE                  = auto()
     SUB_COMPONENT            = auto()
