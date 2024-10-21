@@ -15,7 +15,7 @@ class Base_Component:
             self.__UUID = UUID
 
     def __str__(self) -> str:
-        return f"This is a component class of type {self.getType()}.\nIt has the name {self.getName()}.\nIts UUID is {self.getUUID()}."
+        return f"This is a component class of type {self.getType()}.\nIt has the Name: {self.getName()}.\nIts UUID is {self.getUUID()}."
 
     def getUUID(self) -> int:
         return self.__UUID

@@ -7,7 +7,4 @@ class Component_Enums(Flag):
     TRUTH_COMPONENT          = auto()
     LOGIC_COMPONENT          = auto()
     CONTAINER_COMPONENT      = auto()
-    OBJECT                   = auto()
-    VEHICLE                  = auto()
-    SUB_COMPONENT            = auto()
     TIME_VARYING_COMPONENT   = auto()
