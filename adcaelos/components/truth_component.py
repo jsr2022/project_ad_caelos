@@ -1,27 +1,40 @@
 #truth_component.py
+
+#from python base package(s)
 from sys import exit
+from abc import ABC, abstractmethod
+
+#from other package(s)
 import numpy as np
+
+#from adcaelos package(s)
+from adcaelos.utilities import sim_utils
 from adcaelos.components.time_varying_component import Time_Varying_Component
-from adcaelos.components.connect_container_component import Connect_Container_Component
+
 from adcaelos.components.component_enums import Component_Enums
 from adcaelos.integrators.integrator_enums import Integrator_Enums
 from adcaelos.schedulers.scheduler_priority_enums import Scheduler_Priority_Enums
 
-class Truth_Component(Time_Varying_Component, Connect_Container_Component):
+class Truth_Component(Time_Varying_Component, ABC):
 
-    def __init__(self, statePos2Names: dict, stateNames2Pos: dict, integratorType: Integrator_Enums = Integrator_Enums.RK4, nextTime: float = -1, frequency: int = 100, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
-        super().__init__(nextTime, frequency, Scheduler_Priority_Enums.TRUTH, Component_Enum, name, UUID) 
+    def __init__(self, stateNames: list, integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, nextTime: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
+        Time_Varying_Component.__init__(self, frequency, nextTime, Scheduler_Priority_Enums.TRUTH, Component_Enum, name, UUID) 
+        statePos2Names = sim_utils.checkUniqueStateNames(stateNames) #will call
+        stateNames2Pos = sim_utils.convertDictionaryIndex2State(statePos2Names)
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
         self.__stateNames2Pos = stateNames2Pos #dictionary of keys (state names) to values (state indices in state vector) 
         self.__integratorType = integratorType
 
     def __str__(self) -> str:
-        msgStr = super().__str__()
+        msgStr = Time_Varying_Component.__str__(self)
+        #msgStr = msgStr + Connect_Container_Component.__str__(self)
         msgStr = msgStr + f"\nIntegrator Type: {self.getIntegratorType()}"
-        #ADD PRINTING OUT STATE NUMBER TO STATE NAME
+        msgStr = msgStr + sim_utils.strStateNames(self.__statePos2Names)
         return msgStr
 
+    #@abstractmethod
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
+        """Must Be Implemented at the subclass level"""
         #ADD CHECK ARRAY DIMENSIONS
         pass
     
@@ -74,8 +87,5 @@ class Truth_Component(Time_Varying_Component, Connect_Container_Component):
             print("Error: Improper Key Type Not In Dictionary") #add indices type, also add to logger
             exit(1)  
     
-    # def getUpdate(self) -> bool:
-    #     if np.mod(self.getCurrTime(), 1/self.getFrequency()) == 0:
-    #         return True
-    #     else:
-    #         return False
+    def printStates(self) -> str:
+        pass

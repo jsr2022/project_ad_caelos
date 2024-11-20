@@ -9,9 +9,8 @@ from adcaelos.components.logic_component import Logic_Component
 testBase_Component          = Base_Component()
 testTime_Varying_Component1 = Time_Varying_Component(name="1st Time Varying Component")
 testTime_Varying_Component2 = Time_Varying_Component(name="2nd Time Varying Component")
-aa = dict()
-bb = dict()
-testTruth_Component        = Truth_Component(aa, bb)
+stateNames = ["x_pos", "y_pos", "x_vel", "y_vel"]
+testTruth_Component        = Truth_Component(stateNames)
 testLogic_Component        = Logic_Component()
 testContainer_Component    = Container_Component(testLogic_Component, testTruth_Component, [testTime_Varying_Component1, testTime_Varying_Component2])
 

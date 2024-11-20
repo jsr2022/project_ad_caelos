@@ -55,4 +55,7 @@ class Scheduler():
     def addToHeap(self, listAllComponents) -> list:
         pass
 
+    def runSimulation(self, SimStuff) -> None:
+        pass
+
     
