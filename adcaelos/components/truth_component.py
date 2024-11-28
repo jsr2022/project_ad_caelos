@@ -24,6 +24,8 @@ class Truth_Component(Time_Varying_Component, ABC):
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
         self.__stateNames2Pos = stateNames2Pos #dictionary of keys (state names) to values (state indices in state vector) 
         self.__integratorType = integratorType
+        self.__numStates = len(self.__statePos2Names)
+        self.__numCntrl = -1
 
     def __str__(self) -> str:
         msgStr = Time_Varying_Component.__str__(self)
@@ -32,21 +34,37 @@ class Truth_Component(Time_Varying_Component, ABC):
         msgStr = msgStr + sim_utils.strStateNames(self.__statePos2Names)
         return msgStr
 
-    #@abstractmethod
+    @abstractmethod
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """Must Be Implemented at the subclass level"""
-        #ADD CHECK ARRAY DIMENSIONS
         pass
     
+    def checkState(self, currState: np.array) -> None:
+        if currState.size != self.__numStates:
+            errorMsg = f"Error: Number of States Initialized: [{self.__numStates}]\n"
+            errorMsg += f"Error: Number of States Declared:  [{currState.size}]"
+            print(errorMsg) #add indices type, also add to logger
+            exit(1)
+
+    def checkCntrl(self, currCntrl: np.array) -> None:
+        if self.__numCntrl == -1:
+            self.__numCntrl = currCntrl.size #initialize on first pass 
+            return
+        if currCntrl.size != self.__numCntrl:
+            errorMsg = f"Error: Number of Cntrls Initialized: [{self.__numCntrl}]\n"
+            errorMsg += f"Error: Number of Cntrls Declared:  [{currCntrl.size}]"
+            print(errorMsg) #add indices type, also add to logger
+            exit(1)
+
     def setCurrState(self, currState: np.array) -> None:
-        #ADD CHECK ARRAY DIMENSIONS
+        self.checkState(currState)
         self.currState = currState
 
     def getCurrState(self) -> np.array:
         return self.currState
     
     def setCurrCntrl(self, currCntrl: np.array) -> None:
-        #ADD CHECK ARRAY DIMENSIONS
+        self.checkCntrl(currCntrl)
         self.currCntrl = currCntrl
 
     def getCurrCntrl(self) -> np.array:
@@ -62,7 +80,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             if indices not in self.__statePos2Names:
                 raise KeyError(f"Key {key} not found in dictionary")
             return np.array(self.__statePos2Names[indices])
-        elif isinstance(indices, np.ndarray): 
+        elif isinstance(indices, np.array): 
             stateNames = []
             for key in indices:
                 if key not in self.__statePos2Names:

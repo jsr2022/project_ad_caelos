@@ -5,7 +5,11 @@ from adcaelos.components.time_varying_component import Time_Varying_Component
 from adcaelos.components.truth_component import Truth_Component
 from adcaelos.components.logic_component import Logic_Component
 
+from adcaelos.atmosphere.atmosphere_models import Atmosphere_Models
+altitude_m = 15000
+print(Atmosphere_Models.simple1976EarthAtmosphere(altitude_m))
 
+print("Printing Test Components")
 testBase_Component          = Base_Component()
 testTime_Varying_Component1 = Time_Varying_Component(name="1st Time Varying Component")
 testTime_Varying_Component2 = Time_Varying_Component(name="2nd Time Varying Component")

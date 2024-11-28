@@ -25,15 +25,6 @@ class Base_Component:
     
     def getType(self) -> Component_Enums:
         return self.__type
-    
-    # def compareArraySize(self, currArray, priorArray) -> bool:
-    #     ndimPA = priorArray.ndim
-    #     ndimCA = currArray.ndim
-
-    #     if ndimPA == ndimCA:
-            
-    #     else:
-    #         print("Error: ")
         
 
 

@@ -15,7 +15,7 @@ from adcaelos.schedulers.scheduler_priority_enums import Scheduler_Priority_Enum
 class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
 
     def __init__(self, frequency: int = 100, nextTime: float = 0, scheduler_priority_enum = Scheduler_Priority_Enums.LOWEST, Component_Enum = Component_Enums.TIME_VARYING_COMPONENT, name: str = "Time_Varying_Component", UUID: int = None) -> None:
-                      #frequency,            nextTime,            Scheduler_Priority_Enums.TRUTH,                                                      Component_Enum,                                          name,                                 UUID
+                    #frequency,            nextTime,            Scheduler_Priority_Enums.TRUTH,                                                      Component_Enum,                                          name,                                 UUID
         Base_Component.__init__(self, Component_Enum, name, UUID)
         self.nextTime = nextTime
         self.scheduler_priority_enum = scheduler_priority_enum

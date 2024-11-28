@@ -1,8 +1,6 @@
 import numpy as np
 from scipy.io import loadmat
 
-
-
 def usaf1976model(file_name, path):
     """
     This function imports 1976 standard atmosphere tables from .dat files
