@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 #from adcaelos package(s)
-from adcaelos.utilities import sim_utils
+from adcaelos.utilities.sim_utils import Sim_Utils
 from adcaelos.components.time_varying_component import Time_Varying_Component
 
 from adcaelos.components.component_enums import Component_Enums
@@ -16,11 +16,12 @@ from adcaelos.integrators.integrator_enums import Integrator_Enums
 from adcaelos.schedulers.scheduler_priority_enums import Scheduler_Priority_Enums
 
 class Truth_Component(Time_Varying_Component, ABC):
-
+    #NEED TO MAKE CHANGES
+    #1) Separate states into states that get integrated, just get updated at each time step, 
     def __init__(self, stateNames: list, integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, nextTime: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
         Time_Varying_Component.__init__(self, frequency, nextTime, Scheduler_Priority_Enums.TRUTH, Component_Enum, name, UUID) 
-        statePos2Names = sim_utils.checkUniqueStateNames(stateNames) #will call
-        stateNames2Pos = sim_utils.convertDictionaryIndex2State(statePos2Names)
+        statePos2Names = Sim_Utils.checkUniqueStateNames(stateNames) #will call
+        stateNames2Pos = Sim_Utils.convertDictionaryIndex2State(statePos2Names)
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
         self.__stateNames2Pos = stateNames2Pos #dictionary of keys (state names) to values (state indices in state vector) 
         self.__integratorType = integratorType
@@ -31,12 +32,18 @@ class Truth_Component(Time_Varying_Component, ABC):
         msgStr = Time_Varying_Component.__str__(self)
         #msgStr = msgStr + Connect_Container_Component.__str__(self)
         msgStr = msgStr + f"\nIntegrator Type: {self.getIntegratorType()}"
-        msgStr = msgStr + sim_utils.strStateNames(self.__statePos2Names)
+        msgStr = msgStr + Sim_Utils.strStateNames(self.__statePos2Names)
         return msgStr
 
     @abstractmethod
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """Must Be Implemented at the subclass level"""
+        pass
+
+    @abstractmethod
+    def calculateOtherStates(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
+        """Must Be Implemented at the subclass level
+            States are not being integrated"""
         pass
     
     def checkState(self, currState: np.array) -> None:
