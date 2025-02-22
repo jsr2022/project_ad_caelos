@@ -31,6 +31,8 @@ class Simple_Aircraft(Truth_Component):
 
         longStates = currState[0:9]
         latDirStates = currState[10:19]
+
+        
         #call set speed
         #call component states
         #add pieces together 
