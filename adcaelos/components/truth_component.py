@@ -35,12 +35,12 @@ class Truth_Component(Time_Varying_Component, ABC):
         msgStr = msgStr + Sim_Utils.strStateNames(self.__statePos2Names)
         return msgStr
 
-    @abstractmethod
+    #@abstractmethod
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """Must Be Implemented at the subclass level"""
         pass
 
-    @abstractmethod
+    #@abstractmethod
     def calculateOtherStates(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """Must Be Implemented at the subclass level
             States are not being integrated"""
@@ -85,7 +85,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             return np.array(list(self.__statePos2Names.values()))
         elif isinstance(indices, int):
             if indices not in self.__statePos2Names:
-                raise KeyError(f"Key {key} not found in dictionary")
+                raise KeyError(f"indices {indices} not found in dictionary")
             return np.array(self.__statePos2Names[indices])
         elif isinstance(indices, np.array): 
             stateNames = []

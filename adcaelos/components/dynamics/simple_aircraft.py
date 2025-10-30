@@ -23,7 +23,8 @@ class Simple_Aircraft(Truth_Component):
 
     def __str__(self) -> str:
         msgStr = super().__str__()
-        msgStr = msgStr + f"\n--Simple Aircraft Dynamics--"
+        msgStr = msgStr + "\n--Simple Aircraft Dynamics--"
+        return msgStr
     
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         super().checkState(currState) #I want to know immediately if there is an error

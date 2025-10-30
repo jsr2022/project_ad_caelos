@@ -17,7 +17,7 @@ class Sim_Utils:
             print("Error: State Names are not Unique!")
             print(Sim_Utils.strStateNames(Sim_Utils.generateDictionaryIndex2State(stateNames)))
             exit(1)
-            return dict()
+            
 
     @staticmethod
     def generateDictionaryIndex2State(stateNames:list) -> dict:
@@ -31,8 +31,14 @@ class Sim_Utils:
 
     @staticmethod
     def strStateNames(stateNames:dict) -> str:
-        aKey = list(stateNames)[0]
-        if type(aKey) is not int:
+        try: 
+            aKey = list(stateNames)[0]
+        except IndexError:
+            print("Need at least one key-value pair entered in the dictionary")
+            print(f"stateNames: {stateNames}")
+            exit(1)
+
+        if not isinstance(aKey, int):
             stateNames = Sim_Utils.convertDictionaryIndex2State(stateNames)
 
         max_key_length = max(len(str(key)) for key in stateNames)
