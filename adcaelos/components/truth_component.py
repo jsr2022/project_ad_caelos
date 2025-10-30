@@ -30,7 +30,6 @@ class Truth_Component(Time_Varying_Component, ABC):
 
     def __str__(self) -> str:
         msgStr = Time_Varying_Component.__str__(self)
-        #msgStr = msgStr + Connect_Container_Component.__str__(self)
         msgStr = msgStr + f"\nIntegrator Type: {self.getIntegratorType()}"
         msgStr = msgStr + Sim_Utils.strStateNames(self.__statePos2Names)
         return msgStr

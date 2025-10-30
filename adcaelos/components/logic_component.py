@@ -14,7 +14,7 @@ from adcaelos.components.connect_container_component import Connect_Container_Co
 class Logic_Component(Base_Component, Connect_Container_Component, ABC):
 
     def __init__(self, name: str = "Logic_Component", UUID: int = None) -> None:
-        Base_Component.__init__(Component_Enums.LOGIC_COMPONENT, name, UUID)
+        Base_Component.__init__(self, Component_Enums.LOGIC_COMPONENT, name, UUID)
         Connect_Container_Component.__init__(self)
         
     def __str__(self) -> str:
