@@ -1,6 +1,6 @@
 import abc
 import numpy as np
-from components.truth_component import Truth_Component
+from adcaelos.components.truth_component import Truth_Component
 
 class Integrator_Meta_Interface(abc.ABC): #metaclass=abc.ABCMeta
     @abc.abstractmethod

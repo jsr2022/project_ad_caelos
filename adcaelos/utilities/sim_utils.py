@@ -72,13 +72,13 @@ class Sim_Utils:
     @staticmethod
     def kg2lb() -> float:
         """Kilogram to Pound Mass"""
-        return 2.214 #CHECK ME
+        return 1/Sim_Utils.lb2kg()
     
     @staticmethod
     def lb2kg() -> float:
         """Pound Mass to Kilogram"""
-        return 1/Sim_Utils.kg2lb()
-
+        return 0.45359237 #exact U.S. Definition of a Pound (described in kg)
+    
     @staticmethod
     def nm2km() -> float:
         """Nautical Mile to Kilometer"""
@@ -93,3 +93,13 @@ class Sim_Utils:
     def km2mi() -> float:
         """Kilometer to Mile"""
         return 1/Sim_Utils.mi2km()
+    
+    @staticmethod
+    def km2nm() -> float:
+        """Kilometer to Nautical Mile"""
+        return 1/Sim_Utils.nm2km()
+    
+    @staticmethod
+    def nm2mi() -> float:
+        """Nautical Mile to Mile"""
+        return Sim_Utils.nm2km()/Sim_Utils.mi2km()

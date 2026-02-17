@@ -1,6 +1,6 @@
 import numpy as np
-from integrators.integrator_meta_interface import Integrator_Meta_Interface
-from components.truth_component import Truth_Component
+from adcaelos.integrators.integrator_meta_interface import Integrator_Meta_Interface
+from adcaelos.components.truth_component import Truth_Component
 
 class RK4(Integrator_Meta_Interface):
     
