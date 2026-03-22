@@ -39,4 +39,3 @@ print("")
 print("AIRCRAFT ONE")
 print(testContainer_Simple_Aircraft)
 
-""" CURRENTLY HAVE AN INFINITE LOOP WITHIN THE CONTAINER COMPONENT CLASS"""

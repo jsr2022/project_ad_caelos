@@ -34,15 +34,19 @@ class Truth_Component(Time_Varying_Component, ABC):
         msgStr = msgStr + Sim_Utils.strStateNames(self.__statePos2Names)
         return msgStr
 
-    #@abstractmethod
+    @abstractmethod
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
-        """Must Be Implemented at the subclass level"""
-        pass
+        """Returns the time derivative of the state vector (stateDot)
+        requires: the current state, control, and time.
+        This will be integrated by the RKX integrator
+        Must Be Implemented at the subclass level"""
+        
 
     #@abstractmethod
     def calculateOtherStates(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
-        """Must Be Implemented at the subclass level
-            States are not being integrated"""
+        """
+        This calculates any states that are not integrated but still need to be updated at each time step
+        Must Be Implemented at the subclass level"""
         pass
     
     def checkState(self, currState: np.array) -> None:
@@ -86,7 +90,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             if indices not in self.__statePos2Names:
                 raise KeyError(f"indices {indices} not found in dictionary")
             return np.array(self.__statePos2Names[indices])
-        elif isinstance(indices, np.array): 
+        elif isinstance(indices, np.ndarray): 
             stateNames = []
             for key in indices:
                 if key not in self.__statePos2Names:
@@ -109,7 +113,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             return np.array(statePos)
         else:
             print("Error: Improper Key Type Not In Dictionary") #add indices type, also add to logger
-            exit(1)  
+            exit(1) 
     
-    def printStates(self) -> str:
+    def print_states(self) -> str:
         pass

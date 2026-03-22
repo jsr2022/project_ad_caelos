@@ -20,24 +20,31 @@ from adcaelos.components.logic_component import Logic_Component
 from adcaelos.components.container_component import Container_Component
 
 class Scheduler():
-
-    def __init__(self, containerComponents = [], globalSimStartTime = 0, globalSimEndTime = 0) -> None:
-        self.containerComponents = containerComponents
-        if type(globalSimStartTime) == datetime:
-            self.setupSimSpecificDatetime(globalSimStartTime)
-        elif type(globalSimStartTime) == float:
-            self.setupSimFloatTime(globalSimStartTime)
-        else:
-            #OTHER OPTION
-            self.setupSimFloatTime(globalSimStartTime)
+    """
+    Scheduler class for managing execution of components in a simulation.
+    Handles:
+    - Unpacking container components
+    - Building dependency graph based on component connections
+    - Topologically sorting components for execution order
+    - Managing simulation time and execution of components at correct times
+    """
+    def __init__(self, container_components=None, global_sim_start_time = 0, global_sim_end_time = -1) -> None:
         
-    def unpackContainerComponents(self, containerComponents) -> list:
+        if isinstance(global_sim_start_time, datetime):
+            self.setup_sim_specific_datetime(global_sim_start_time)
+        else:
+            self.setup_sim_float_time(global_sim_start_time)
+
+        self.unpack_container_components(container_components)
+        
+
+    def unpack_container_components(self, container_components) -> list:
         pass
 
-    def initializeDependencies(self, listAllComponents) -> None:
+    def initialize_dependencies(self, listAllComponents) -> None:
         pass
 
-    def buildDependencyGraph(self, listAllComponents) -> None:
+    def build_dependency_graph(self, listAllComponents) -> None:
         pass
 
     def compareComponents(self, c1, c2) -> bool:
@@ -46,16 +53,16 @@ class Scheduler():
     def topologicalSortDependencyGraph(self, dependencyGraph) -> dict:
         pass
 
-    def setupSimSpecificDatetime(startTime: datetime) -> None:
+    def setup_sim_specific_datetime(self, startTime: datetime) -> None:
         pass
 
-    def setupSimFloatTime(startTime: float) -> None:
-        pass
+    def setup_sim_float_time(self, start_time: float) -> None:
+        self.global_sim_start_time = start_time
 
     def addToHeap(self, listAllComponents) -> list:
         pass
 
-    def runSimulation(self, SimStuff) -> None:
+    def run_simulation(self, SimStuff) -> None:
         pass
 
     
