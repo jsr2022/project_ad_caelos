@@ -109,14 +109,14 @@ graph TD
 | Entity | Named Container_Component | Renamed to Entity |
 | Configuration | Not implemented | YAML/JSON/Code support |
 | Serialization | Not implemented | Save/load simulation state |
-| Integrator Bug | RK4 uses wrong method name | Fixed to use `statesDot()` |
+| (Resolved) Integrator Bug | RK4 used wrong method name | Fixed to use `statesDot()` |
 | Abstract Methods | Some commented out | Properly enforced |
 
 ---
 
 ## Section 6: Known Bugs/Issues
 
-- **RK4 Method Name Bug**: RK4 calls `getStatesDot()` but Truth_Component has `statesDot()` - this will fail at runtime
+- **(RESOLVED) RK4 Method Name Bug**: RK4 called `getStatesDot()` but Truth_Component has `statesDot()` - now fixed
 - **Scheduler Incomplete**: All methods in scheduler.py are empty stubs (pass) - cannot run simulation
 - **Enum Misuse**: Priority enums use `Flag` but are used as integer values - may cause unexpected behavior
 - **Abstract Methods**: Several methods marked as `@abstractmethod` have decorators commented out, making them optional rather than required
