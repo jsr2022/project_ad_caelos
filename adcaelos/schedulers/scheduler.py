@@ -54,7 +54,16 @@ class Scheduler():
         pass
 
     def setup_sim_specific_datetime(self, startTime: datetime) -> None:
-        pass
+        """
+        _summary_
+
+        Parameters
+        ----------
+        startTime : datetime
+            _description_
+        """
+        self.global_sim_start_time = 0
+
 
     def setup_sim_float_time(self, start_time: float) -> None:
         self.global_sim_start_time = start_time
