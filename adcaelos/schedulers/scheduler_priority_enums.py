@@ -1,8 +1,8 @@
 #scheduler_priority_enums.py
 
-from enum import Flag
+from enum import IntEnum
 
-class Scheduler_Priority_Enums(Flag):
+class Scheduler_Priority_Enums(IntEnum):
     CONTROL         = 1
     NAVIGATION      = 2
     GUIDANCE        = 3

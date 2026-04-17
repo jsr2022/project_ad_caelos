@@ -1,0 +1,15 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: 50e3fae9-c27f-4684-84bf-e35e5c7eeb87
+  # title:
+  # description:
+  # keywords: []
+  # authors: [Jonathan S. Richter]
+  github: https://github.com/jsr2022/project_ad_caelos
+  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+site:
+  template: book-theme
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
