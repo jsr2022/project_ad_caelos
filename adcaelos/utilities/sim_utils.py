@@ -1,7 +1,7 @@
 #sim_utils.py
 
 #from python base package(s)
-from sys import exit
+from sys import exit as sys_exit
 
 #Import External Python Packages
 import numpy as np
@@ -16,7 +16,7 @@ class Sim_Utils:
         else:
             print("Error: State Names are not Unique!")
             print(Sim_Utils.strStateNames(Sim_Utils.generateDictionaryIndex2State(stateNames)))
-            exit(1)
+            sys_exit(1)
             
 
     @staticmethod
@@ -36,7 +36,7 @@ class Sim_Utils:
         except IndexError:
             print("Need at least one key-value pair entered in the dictionary")
             print(f"stateNames: {stateNames}")
-            exit(1)
+            sys_exit(1)
 
         if not isinstance(aKey, int):
             stateNames = Sim_Utils.convertDictionaryIndex2State(stateNames)

@@ -55,25 +55,36 @@ class Scheduler():
             
             tempTruthComponent = container.getTC()
             tempLogicComponent = container.getLC()
-            tempEventTruth = Event(tempTruthComponent.getTime(), priority=tempTruthComponent.getSchedulerPriorityEnum() , component=tempTruthComponent, action=f"Container Truth Component: {tempTruthComponent.getName()} Event")
-            tempEventLogic = Event(tempLogicComponent.getTime(), priority=tempLogicComponent.getSchedulerPriorityEnum() , component=tempLogicComponent, action=f"Container Logic Component: {tempLogicComponent.getName()} Event")
+            tempEventTruth = Event(tempTruthComponent.getNextTime(), priority=tempTruthComponent.getSchedulerPriorityEnum() , component=tempTruthComponent, action=f"Container Truth Component: {tempTruthComponent.getName()} Event")
+            tempEventLogic = Event(tempLogicComponent.getNextTime(), priority=tempLogicComponent.getSchedulerPriorityEnum() , component=tempLogicComponent, action=f"Container Logic Component: {tempLogicComponent.getName()} Event")
             self.addToHeap(tempEventTruth)
             self.addToHeap(tempEventLogic)
             for TVC in container.getTVC():
-                tempEventTVC = Event(TVC.getTime(), priority=TVC.getSchedulerPriorityEnum() , component=TVC, action=f"Container Time Varying Component: {TVC.getName()} Event")
+                tempEventTVC = Event(TVC.getNextTime(), priority=TVC.getSchedulerPriorityEnum() , component=TVC, action=f"Container Time Varying Component: {TVC.getName()} Event")
                 self.addToHeap(tempEventTVC)
 
-    def initialize_dependencies(self, listAllComponents) -> None:
-        pass
+    # def initialize_dependencies(self, listAllComponents) -> None:
+    #     pass
 
-    def build_dependency_graph(self, listAllComponents) -> None:
-        pass
+    # def build_dependency_graph(self, listAllComponents) -> None:
+    #     pass
 
-    def compareComponents(self, c1, c2) -> bool:
-        pass
+    # def compareComponents(self, c1, c2) -> bool:
+    #     pass
 
-    def topologicalSortDependencyGraph(self, dependencyGraph) -> dict:
-        pass
+    # def topologicalSortDependencyGraph(self, dependencyGraph) -> dict:
+    #     pass
+
+    def update_event(self, event: Event) -> None:
+        """
+        Performs the action requested on the current event
+        """
+        component = event.component
+        if isinstance(component, Time_Varying_Component):
+            new_event = Event(component.getNextTime(), priority=component.getSchedulerPriorityEnum(), component=component, action=f"Time Varying Component: {component.getName()} Event")
+        else:
+            raise ValueError("Error: Component is not a Time Varying Component. Cannot Create Next Event.")
+        self.addToHeap(new_event)
 
     def setup_sim_specific_datetime(self, startTime: datetime) -> None:
         """
@@ -93,7 +104,27 @@ class Scheduler():
     def addToHeap(self, event: Event) -> None:
         heapq.heappush(self.all_events, event)
 
+    def getTemporarySimulationTerminationCondition(self) -> bool:
+        """
+        _summary_
+
+        Returns
+        -------
+        bool
+            Checks Simulation Termination Conditions Other than Time. Currently only returns true.
+        """
+        return True
+    
+
     def run_simulation(self, SimStuff) -> None:
-        pass
+        while ((self.all_events and self.getTemporarySimulationTerminationCondition()) and (self.global_sim_start_time <= self.global_sim_end_time)):
+            next_event = heapq.heappop(self.all_events)
+
+            print(f"Executing Event: {next_event.action} at time {next_event.time}")
+            next_event.component.act()
+            self.update_event(next_event)
+
+            self.global_sim_start_time = next_event.time
+            
 
     

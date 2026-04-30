@@ -1,7 +1,7 @@
 #truth_component.py
 
 #from python base package(s)
-from sys import exit
+from sys import exit as sys_exit
 from abc import ABC, abstractmethod
 
 #from other package(s)
@@ -12,8 +12,11 @@ from adcaelos.utilities.sim_utils import Sim_Utils
 from adcaelos.components.time_varying_component import Time_Varying_Component
 
 from adcaelos.components.component_enums import Component_Enums
-from adcaelos.integrators.integrator_enums import Integrator_Enums
 from adcaelos.schedulers.scheduler_priority_enums import Scheduler_Priority_Enums
+
+# from adcaelos integrator classes
+from adcaelos.integrators.integrator_enums import Integrator_Enums
+from adcaelos.integrators.integrator_factory import IntegratorFactory
 
 class Truth_Component(Time_Varying_Component, ABC):
     #NEED TO MAKE CHANGES
@@ -42,19 +45,18 @@ class Truth_Component(Time_Varying_Component, ABC):
         Must Be Implemented at the subclass level"""
         
 
-    #@abstractmethod
+    @abstractmethod
     def calculateOtherStates(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """
         This calculates any states that are not integrated but still need to be updated at each time step
         Must Be Implemented at the subclass level"""
-        pass
     
     def checkState(self, currState: np.array) -> None:
         if currState.size != self.__numStates:
             errorMsg = f"Error: Number of States Initialized: [{self.__numStates}]\n"
             errorMsg += f"Error: Number of States Declared:  [{currState.size}]"
             print(errorMsg) #add indices type, also add to logger
-            exit(1)
+            sys_exit(1)
 
     def checkCntrl(self, currCntrl: np.array) -> None:
         if self.__numCntrl == -1:
@@ -64,7 +66,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             errorMsg = f"Error: Number of Cntrls Initialized: [{self.__numCntrl}]\n"
             errorMsg += f"Error: Number of Cntrls Declared:  [{currCntrl.size}]"
             print(errorMsg) #add indices type, also add to logger
-            exit(1)
+            sys_exit(1)
 
     def setCurrState(self, currState: np.array) -> None:
         self.checkState(currState)
@@ -99,7 +101,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             return np.array(stateNames) #I am storing the string arrays in np arrays maybe a bad idea...
         else:
             print("Error: Improper Key Type Not In Dictionary") #add indices type, also add to logger
-            exit(1)
+            sys_exit(1)
 
     def getStateNames2Pos(self, indices = None):
         if indices is None:
@@ -113,7 +115,31 @@ class Truth_Component(Time_Varying_Component, ABC):
             return np.array(statePos)
         else:
             print("Error: Improper Key Type Not In Dictionary") #add indices type, also add to logger
-            exit(1) 
+            sys_exit(1) 
     
+    def act(self) -> None:
+        """
+        Integrates the truth state using the configured integrator.
+        Called by the scheduler during event execution.
+        """
+        
+        # Create/get the integrator instance for this component
+        integrator = IntegratorFactory.create(self.__integratorType)
+        
+        # Run the integrator to compute next state
+        next_state = integrator.getNextState(
+            fieldObject=self,
+            currTime=self.getNextTime(),
+            dt=self.getPeriod()
+        )
+        
+        # Update the internal state
+        self.setCurrState(next_state)
+        
+        # Calculate any non-integrated (derived) states
+        self.calculateOtherStates(next_state, self.getCurrCntrl(), self.getNextTime())
+        self.setNextTime()
+
+
     def print_states(self) -> str:
         pass

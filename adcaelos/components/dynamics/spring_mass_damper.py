@@ -1,8 +1,7 @@
 # spring_mass_damper.py
 
 # from python base package(s)
-from sys import exit
-from abc import ABC, abstractmethod
+from sys import exit as sys_exit
 
 # from other package(s)
 import numpy as np
@@ -54,7 +53,14 @@ class SpringMassDamper(Truth_Component):
         velocity = currState[1]  # [m/s]
         
         position_dot = velocity
-        velocity_dot = -self.damping_constant/self.mass * velocity - self.spring_constant/self.mass * position + currCntrl/self.mass  # [m/s^2], where currCntrl[0] is the external force applied to the mass [N]
+        velocity_dot = -self.damping_constant/self.mass * velocity - self.spring_constant/self.mass * position + currCntrl[0]/self.mass  # [m/s^2], where currCntrl[0] is the external force applied to the mass [N]
 
         # Return state derivatives as a numpy array
         return np.array([position_dot, velocity_dot]).T  # [m/s, m/s^2]
+    
+    def calculateOtherStates(self, currState: np.array, currCntrl: np.array, currTime: float) -> None:
+        """
+        This calculates any states that are not integrated but still need to be updated at each time step
+        For this simple spring mass damper system, there are no additional states to calculate, so this function does nothing.
+        """
+        pass
