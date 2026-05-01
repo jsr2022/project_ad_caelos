@@ -72,9 +72,8 @@ graph TD
     Time_Varying_Component --> Logic_Component
     Truth_Component --> Simple_Aircraft
     Truth_Component --> SpringMassDamper
-    Entity --> LC[Logic Component]
-    Entity --> TC[Truth Component]
-    Entity --> TVC[Time Varying Components]
+    Entity --> LC[Logic Components]
+    Entity --> TC[Truth Components]
 ```
 
 ---
@@ -94,8 +93,8 @@ graph TD
 
 1. **Entity** - Groups related components (Truth + Logic + Time-Varying)
 2. **Truth Component** - Models physics/dynamics (state integration)
-3. **Logic Component** - Control algorithms (runs at fixed frequency)
-4. **Time-Varying Component** - Base for time-driven execution
+3. **Logic Component** - Control algorithms (runs at various frequencies (guidance, navigation, control, seeker, & etc.))
+4. **Time-Varying Component** - Base for anything with time-driven execution
 5. **Integrator** - Pluggable numerical methods
 6. **Scheduler** - Manages simulation execution timing
 
@@ -109,27 +108,34 @@ graph TD
 | Entity | Named Container_Component | Renamed to Entity |
 | Configuration | Not implemented | YAML/JSON/Code support |
 | Serialization | Not implemented | Save/load simulation state |
-| (Resolved) Integrator Bug | RK4 used wrong method name | Fixed to use `statesDot()` |
 | Abstract Methods | Some commented out | Properly enforced |
 
 ---
 
 ## Section 6: Known Bugs/Issues
 
-- **(RESOLVED) RK4 Method Name Bug**: RK4 called `getStatesDot()` but Truth_Component has `statesDot()` - now fixed
-- **Scheduler Incomplete**: All methods in scheduler.py are empty stubs (pass) - cannot run simulation
+- **Scheduler Incomplete**:
+    - have current version working
+    - needs improved termination criteria
+    - vehicle specific termination criteria (where to implement?)
+    - **Numerical Precision** problem with `setNextTime()` inside of `time_varying_component.py` 
+        - leads to scheduler skipping steps or adding additional steps
+        - leads to integration problems as either the `dt` or the `currTime` is off
 - **Enum Misuse**: Priority enums use `Flag` but are used as integer values - may cause unexpected behavior
+    - `scheduler_priority_enums.py` have been updated
+    - unsure if other enums need to switch - currently set as `Auto()` for the following:
+    - `integrator_enums.py`
+        - `component_enums.py`
+        - `scheduler_enums.py`
 - **Abstract Methods**: Several methods marked as `@abstractmethod` have decorators commented out, making them optional rather than required
-- **No Event System**: Requirements specify event-driven communication but none implemented
+- **Event System**: Requirements specify event-driven communication
+    - preliminary version implemented in Event.py
 - **No Serialization**: No save/load functionality for simulation state
 - **Incomplete Quaternion**: Only has conjugate function, missing multiplication, conversion, etc.
-
 ---
 
 ## Section 7: Pending Decisions
 
-- **Event System**: Where should it live? How to implement?
-- **Time Management**: Separate module or part of scheduler?
 - **Custom Systems**: How to define processing groups?
 - **Dependency Injection**: Not yet implemented
 

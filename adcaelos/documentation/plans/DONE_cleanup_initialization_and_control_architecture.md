@@ -1,5 +1,5 @@
 # Plan: Fix Scheduler & Implement Initial State/Control Architecture
-
+04/30/2026 or 05/01/2026 depending where the international dateline is (traveling to japan)
 ## Summary
 Fix critical bugs in the scheduler, establish clean initial state/control initialization on Truth_Component subclasses, and make the simulation runnable end-to-end with the SpringMassDamper example.
 
