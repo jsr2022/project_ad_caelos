@@ -25,10 +25,12 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
     
     def __str__(self) -> str:
         msgStr = Base_Component.__str__(self)
-        msgStr = msgStr + Connect_Container_Component.__str__(self)
+        msgStr = msgStr + "\nThis Component is a member of the following container:"\
+                        + Connect_Container_Component.__str__(self)
+
         msgStr = msgStr + f"\nNext Time: {self.getNextTime()} [s].\nFrequency: {self.getFrequency()} [Hz].\nPeriod: {self.getPeriod()} [s]."
         return msgStr
-     
+    
     @abstractmethod
     def act(self) -> None:
         """
@@ -36,7 +38,7 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         """
         
     def setNextTime(self, next_time: float = np.nan) -> None:
-        if isinstance(next_time, np.nan):
+        if next_time is np.nan:
             currTime = self.getNextTime()
             self.nextTime = currTime + self.getPeriod()
         else:

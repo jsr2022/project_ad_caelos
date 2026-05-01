@@ -1,12 +1,15 @@
 #connect_container_component.py
 
 class Connect_Container_Component:
+    """
+    This class connects all of the various components together for a vehicle so they know what truth or logical pieces they directly interact with
+    """
     def __init__(self) -> None:
         self.__containerComponent = None
 
     def __str__(self) -> str:
         if self.__containerComponent:
-            return f"\nContainer Component UUID: {self.__containerComponent.getUUID()}. Container Component Name: {self.__containerComponent.getName()}"
+            return f"\nContainer Component Name: {self.__containerComponent.getName()} Container Component UUID: {self.__containerComponent.getUUID()}."
         return "\nContainer Component: None"
 
     def setContainerComponent(self, containerComponent) -> None:

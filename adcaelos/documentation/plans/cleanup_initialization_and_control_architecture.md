@@ -5,12 +5,13 @@ Fix critical bugs in the scheduler, establish clean initial state/control initia
 
 ## Changes
 
-### 1. Fix Scheduler Bugs (`adcaelos/schedulers/scheduler.py`)
+### DO NOT IMMPLEMENT CHANGES THAT HAVE BEEN COMMENTED OUT!
+<!-- ### 1. Fix Scheduler Bugs (`adcaelos/schedulers/scheduler.py`)
 - Replace `getTime()` with `getNextTime()` on lines 58, 59, 63 (method doesn't exist)
 - Rename `getTemporarySimulationTerminationCondition()` to `is_simulation_configured()` — clarify that it checks whether sim is properly configured, not whether it should terminate
 - The method should return `True` when `global_sim_end_time > 0` (properly configured), `False` otherwise
 - Simplify `run_simulation()` loop condition to: `while self.is_simulation_configured() and self.all_events and self.global_sim_start_time < self.global_sim_end_time:`
-- If `global_sim_end_time == -1`, the sim does NOT run (not configured)
+- If `global_sim_end_time == -1`, the sim does NOT run (not configured) -->
 
 ### 2. Add Initial State/Control to Truth_Component Subclasses
 Both `SpringMassDamper` and `Simple_Aircraft` should accept `initial_state` and `initial_control` in their `__init__`, then call `setCurrState()` and `setCurrCntrl()`:

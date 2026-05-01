@@ -1,41 +1,72 @@
 #testSimulation.py
-from adcaelos.components.base_component import Base_Component
+import numpy as np
 from adcaelos.components.container_component import Container_Component
 from adcaelos.components.time_varying_component import Time_Varying_Component
-from adcaelos.components.truth_component import Truth_Component
 from adcaelos.components.logic_component import Logic_Component
-from adcaelos.components.dynamics.simple_aircraft import Simple_Aircraft
+from adcaelos.components.dynamics.spring_mass_damper import SpringMassDamper
+from adcaelos.schedulers.scheduler import Scheduler
+from adcaelos.integrators.integrator_enums import Integrator_Enums
 
-from adcaelos.atmosphere.atmosphere_models import Atmosphere_Models
-altitude_m = 15000
-print(Atmosphere_Models.simple1976EarthAtmosphere(altitude_m))
+print("=== Spring Mass Damper Simulation Test ===")
 
-print("Printing Test Components")
-testBase_Component            = Base_Component()
-testTime_Varying_Component1   = Time_Varying_Component(name="1st Time Varying Component")
-testTime_Varying_Component2   = Time_Varying_Component(name="2nd Time Varying Component")
-stateNames = ["x_pos", "y_pos", "x_vel", "y_vel"]
-#testTruth_Component           = Truth_Component(stateNames)
-testLogic_Component           = Logic_Component()
-#testContainer_Component       = Container_Component(testLogic_Component, testTruth_Component, [testTime_Varying_Component1, testTime_Varying_Component2])
+# Create SpringMassDamper with initial state and control
+stateNames = ["position", "velocity"]
+initial_state = np.array([1.0, 0.1])  # position=1m, velocity=0.1m/s
+initial_control = np.array([0.0])     # zero external force
 
-testSimple_Aircraft           = Simple_Aircraft(stateNames)
-testContainer_Simple_Aircraft = Container_Component(testLogic_Component, testSimple_Aircraft, [testTime_Varying_Component1, testTime_Varying_Component2], name="Simple Aircraft Container")
+smd = SpringMassDamper(
+    stateNames=stateNames,
+    initial_state=initial_state,
+    initial_control=initial_control,
+    integratorType=Integrator_Enums.RK4,
+    frequency=100,
+    nextTime=0.0,
+    name="Spring_Mass_Damper",
+    mass=1.0,
+    spring_constant=1.0,
+    damping_constant=0.5
+)
+print("Created Truth Physics Spring Mass Damper")
+# Print(f"Initial condition: {smd.getCurrState()})
+# print(f"Initial control: {smd.getCurrCntrl()}")
 
+# Create a dummy Logic_Component
+logic = Logic_Component(frequency=50, name="Dummy_Logic")
+print(f"Logic_Component created: {logic.getName()}")
 
-print(testBase_Component)
-print("")
-print(testTime_Varying_Component1)
-print("")
-print(testTime_Varying_Component2)
-print("")
-#print(testTruth_Component)
-print("")
-print(testLogic_Component)
-print("")
-# print("CONTAINER ONE")
-# print(testContainer_Component)
-print("")
-print("AIRCRAFT ONE")
-print(testContainer_Simple_Aircraft)
+# Create Container_Component
+container = Container_Component(
+    a_Logic_Component=logic,
+    a_Truth_Component=smd,
+    Time_Varying_Components=[],
+    name="SMD_Container"
+)
+print("==================THE CONTAINER==================")
+print(container)
 
+# Create Scheduler with valid end time (2.0 seconds)
+scheduler = Scheduler(
+    container_components=[container],
+    global_sim_start_time=0.0,
+    global_sim_end_time=20.0,
+    round2Decimals=10
+)
+print(f"Scheduler created with end time: {scheduler.global_sim_end_time} [s]")
+
+# Print state before simulation
+print(f"\n--- State before simulation ---")
+print(f"Time: {smd.getNextTime():.3f}s")
+print(f"State: {smd.getCurrState()}")
+print(f"Control: {smd.getCurrCntrl()}")
+
+# Run simulation
+print("\n--- Running simulation ---")
+scheduler.run_simulation(None)
+
+# Print state after simulation
+print(f"\n--- State after simulation ---")
+print(f"Time: {smd.getNextTime():.3f}s")
+print(f"State: {smd.getCurrState()}")
+print(f"Control: {smd.getCurrCntrl()}")
+
+print("\n=== Simulation Complete ===")
