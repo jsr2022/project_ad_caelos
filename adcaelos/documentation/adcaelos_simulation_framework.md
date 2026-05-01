@@ -138,13 +138,15 @@ graph TD
 
 - **Custom Systems**: How to define processing groups?
 - **Dependency Injection**: Not yet implemented
+    - consider sub levels of priority in the event class?
+    - do I put anything inside of the component_container/entity object?
+- Event-driven communication
+- /core folder for simulation engine core
 
 ---
 
 ## Section 8: Future Considerations
 
-- /core folder for simulation engine core
 - /systems folder for custom processing systems
-- Event-driven communication
 - Comprehensive testing framework
 - Profiling hooks

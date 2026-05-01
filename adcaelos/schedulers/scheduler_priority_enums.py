@@ -3,10 +3,11 @@
 from enum import IntEnum
 
 class Scheduler_Priority_Enums(IntEnum):
-    CONTROL         = 1
-    NAVIGATION      = 2
-    GUIDANCE        = 3
-    SENSORS         = 4
-    TRUTH           = 5
-    LOWEST          = 6
+    HIGHEST         = 1
+    CONTROL         = 2
+    NAVIGATION      = 3
+    GUIDANCE        = 4
+    SENSORS         = 5
+    TRUTH           = 6
+    LOWEST          = 7
     
