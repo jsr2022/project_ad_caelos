@@ -140,7 +140,8 @@ graph TD
 - **Dependency Injection**: Not yet implemented
     - consider sub levels of priority in the event class?
     - do I put anything inside of the component_container/entity object?
-- Event-driven communication
+- **Event-driven communication/Between Component Communication**
+    - Or 
 - /core folder for simulation engine core
 
 ---
