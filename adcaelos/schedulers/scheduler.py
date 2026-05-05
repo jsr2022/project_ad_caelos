@@ -31,7 +31,7 @@ class Scheduler():
     - Topologically sorting components for execution order
     - Managing simulation time and execution of components at correct times
     """
-    def __init__(self, container_components=None, global_sim_start_time = 0, global_sim_end_time = -1, round2Decimals=10) -> None:
+    def __init__(self, container_components=None, global_sim_start_time = 0, global_sim_end_time = -1, round2Decimals=10, end_time_tolerance: float | None = None) -> None:
         
         if isinstance(global_sim_start_time, datetime):
             self.setup_sim_specific_datetime(global_sim_start_time)
@@ -42,6 +42,7 @@ class Scheduler():
         self.unpack_container_components(container_components)
         self.global_sim_slowest_time = self.global_sim_end_time
         self.round2Decimals = round2Decimals
+        self.end_time_tolerance = end_time_tolerance
         
 
     def unpack_container_components(self, container_components) -> None:
@@ -83,7 +84,7 @@ class Scheduler():
         """
         component = event.component
         if isinstance(component, Time_Varying_Component):
-            new_event = Event(np.round(component.getNextTime(), decimals=self.round2Decimals), priority=component.getSchedulerPriorityEnum(), component=component, action=f"Container type {component.getType()}: {component.getName()} Event")
+            new_event = Event(component.getNextTime(), priority=component.getSchedulerPriorityEnum(), component=component, action=f"Container type {component.getType()}: {component.getName()} Event")
         else:
             raise ValueError("Error: Component is not a Time Varying Component. Cannot Create Next Event.")
         self.addToHeap(new_event)
@@ -118,11 +119,19 @@ class Scheduler():
         return True
     
     #global
+    def _time_lte_end(self, t: float) -> bool:
+        """Return True if t is considered <= global_sim_end_time given tolerance."""
+        if self.end_time_tolerance is None:
+            return t <= self.global_sim_end_time
+        # Use tolerance (abs) for boundary comparison.
+        # This ensures the final allowed event is not spuriously dropped.
+        return t <= self.global_sim_end_time + self.end_time_tolerance
+
     def run_simulation(self, SimStuff) -> None:
-        while ((self.all_events and self.getTemporarySimulationTerminationCondition())): # and (self.global_sim_slowest_time <= self.global_sim_end_time)):
+        while ((self.all_events and self.getTemporarySimulationTerminationCondition())): # and (self.global_sim_slowest_time <= self.global_sim_end_time):
             # we want to continue running events that are behind sim end time even if vehicle has passed the global stop time
             next_event = heapq.heappop(self.all_events)
-            if np.round(next_event.component.getNextTime(), decimals=self.round2Decimals) <= self.global_sim_end_time:
+            if self._time_lte_end(np.round(next_event.component.getNextTime(), decimals=self.round2Decimals)):
                 print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
                 # Undergo Action
                 next_event.component.act()
