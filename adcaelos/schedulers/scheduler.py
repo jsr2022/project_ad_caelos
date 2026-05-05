@@ -118,7 +118,6 @@ class Scheduler():
         """
         return True
     
-    #global
     def _time_lte_end(self, t: float) -> bool:
         """Return True if t is considered <= global_sim_end_time given tolerance."""
         if self.end_time_tolerance is None:
@@ -131,7 +130,7 @@ class Scheduler():
         while ((self.all_events and self.getTemporarySimulationTerminationCondition())): # and (self.global_sim_slowest_time <= self.global_sim_end_time):
             # we want to continue running events that are behind sim end time even if vehicle has passed the global stop time
             next_event = heapq.heappop(self.all_events)
-            if self._time_lte_end(np.round(next_event.component.getNextTime(), decimals=self.round2Decimals)):
+            if self._time_lte_end(next_event.component.getNextTime()):
                 print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
                 # Undergo Action
                 next_event.component.act()
