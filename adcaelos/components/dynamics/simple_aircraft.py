@@ -13,7 +13,7 @@ from adcaelos.components.component_enums import Component_Enums
 from adcaelos.integrators.integrator_enums import Integrator_Enums
 
 #utilities
-from adcaelos.utilities.sim_utils import Sim_Utils
+from adcaelos.utilities.units import Units
 from adcaelos.atmosphere.atmosphere_models import Atmosphere_Models
 
 class Simple_Aircraft(Truth_Component):
@@ -82,9 +82,9 @@ class Simple_Aircraft(Truth_Component):
         #Imperial Measurements Here Below
         gravity = 32.174049  # ft/s^2
         rho_imp_rho_m = 515.3788184  # rho imperial to rho metric
-        alt_ft = altitude*Sim_Utils.m2ft()
-        Vinf_ft = Vinf*Sim_Utils.m2ft()
-        qinf_slugs_ft3 = (qinf/rho_imp_rho_m)*(Sim_Utils.m2ft()**2)
+        alt_ft = altitude*Units.m2ft()
+        Vinf_ft = Vinf*Units.m2ft()
+        qinf_slugs_ft3 = (qinf/rho_imp_rho_m)*(Units.m2ft()**2)
 
         # A-4D Longitudinal Values Condition 6
         Xu = -0.0353
@@ -170,11 +170,11 @@ class Simple_Aircraft(Truth_Component):
         longStatesDot[0:4] = np.matmul(A, longStates[0:4]) + np.matmul(B, longCntrl)
         
         #Converting from Imperial back to SI units
-        longStatesDot[0] = longStatesDot[0] * Sim_Utils.ft2m() #state units = m/s
+        longStatesDot[0] = longStatesDot[0] * Units.ft2m() #state units = m/s
         longStatesDot[1] = longStatesDot[1] # state units are rads (no change)
         longStatesDot[2] = longStatesDot[2] # state units are rads (no change)
         longStatesDot[3] = longStatesDot[3] # state units are rad/s (no change)
-        longStatesDot[4] = longStatesDot[4] * Sim_Utils.ft2m() #state units are m
+        longStatesDot[4] = longStatesDot[4] * Units.ft2m() #state units are m
 
         #Extending to non perturbation states (derivatives on non perturbed parts are 0 so they match!)
         longStatesDot[5:9] = longStatesDot[0:4]
@@ -212,9 +212,9 @@ class Simple_Aircraft(Truth_Component):
         #Imperial Measurements Here Below
         gravity = 32.174049  # ft/s^2
         rho_imp_rho_m = 515.3788184  # rho imperial to rho metric
-        alt_ft = altitude*Sim_Utils.m2ft()
-        Vinf_ft = Vinf*Sim_Utils.m2ft()
-        qinf_slugs_ft3 = (qinf/rho_imp_rho_m)*(Sim_Utils.m2ft()**2)
+        alt_ft = altitude*Units.m2ft()
+        Vinf_ft = Vinf*Units.m2ft()
+        qinf_slugs_ft3 = (qinf/rho_imp_rho_m)*(Units.m2ft()**2)
 
         # Lateral-Directional Space A-4D 6th problem
         alpha = alphaC
