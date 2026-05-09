@@ -121,7 +121,7 @@ graph TD
     - ~~**Numerical Precision** problem with `setNextTime()` inside of `time_varying_component.py`~~ **[RESOLVED]**
         - ~~leads to scheduler skipping steps or adding additional steps~~
         - ~~leads to integration problems as either the `dt` or the `currTime` is off~~
-        - **Fix**: Replaced additive accumulation with an integer step counter (`nextTime = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `setFrequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `.kilo/plans/1777947027981-sunny-otter.md`.
+        - **Fix**: Replaced additive accumulation with an integer step counter (`nextTime = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `setFrequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `documentation/plans/DONE_fix_numerical_drift_error.md`.
 - **Enum Misuse**: Priority enums use `Flag` but are used as integer values - may cause unexpected behavior
     - `scheduler_priority_enums.py` have been updated
     - unsure if other enums need to switch - currently set as `Auto()` for the following:

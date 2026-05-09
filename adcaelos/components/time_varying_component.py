@@ -39,7 +39,7 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         """
         _This class will implement whatever action is undertaken (for truth components it is running an integrator)_
         """
-        
+
     def setNextTime(self, next_time: float = None) -> None:
         if next_time is None:
             self.__step_count += 1
@@ -49,6 +49,7 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
             # default calls continue from this explicit time without drift.
             self.__start_counter_time = float(next_time)
             self.__step_count = 0
+            self.setFrequency(int(1 / (self.__start_counter_time-self.__nextTime)))
             self.__nextTime = self.__start_counter_time
 
     def getNextTime(self) -> float:
@@ -72,8 +73,6 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         if new_frequency <= 0:
             raise ValueError("Frequency must be positive")
         # Preserve current time as new anchor
-        self.__start_counter_time = self.__nextTime
-        self.__step_count = 0
         self.__frequency = new_frequency
         self.__period = 1.0 / new_frequency
     
@@ -84,3 +83,6 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
     def getStartCounterTime(self) -> float:
         """_Return the anchor time from which the step count is calculated (for debugging)._"""
         return self.__start_counter_time
+
+    def store_data(self, data) -> None:
+        pass
