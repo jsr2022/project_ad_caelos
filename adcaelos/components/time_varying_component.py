@@ -40,17 +40,19 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         _This class will implement whatever action is undertaken (for truth components it is running an integrator)_
         """
 
-    def setNextTime(self, next_time: float = None) -> None:
+    def setNextTime(self, next_time: float = None, next_frequency: int = None) -> None:
         if next_time is None:
             self.__step_count += 1
             self.__nextTime = self.__start_counter_time + self.__step_count / self.__frequency
-        else:
+        elif next_time is not None and next_frequency is not None:
             # Non-fixed step override: re-anchor the counter so subsequent
             # default calls continue from this explicit time without drift.
             self.__start_counter_time = float(next_time)
             self.__step_count = 0
-            self.setFrequency(int(1 / (self.__start_counter_time-self.__nextTime)))
+            self.setFrequency(next_frequency)
             self.__nextTime = self.__start_counter_time
+        else:
+            
 
     def getNextTime(self) -> float:
         return self.__nextTime
