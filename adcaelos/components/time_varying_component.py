@@ -52,7 +52,8 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
             self.setFrequency(next_frequency)
             self.__nextTime = self.__start_counter_time
         else:
-            
+            errorMsg = f"Invalid arguments for setNextTime: next_time={next_time}, next_frequency={next_frequency}. Must provide either no arguments or both next_time and next_frequency."
+            raise ValueError(errorMsg)
 
     def getNextTime(self) -> float:
         return self.__nextTime
