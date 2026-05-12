@@ -9,4 +9,5 @@ dependencies = [
     "nbformat>=5.10.4",
     "numpy>=2.3.4",
     "numpydoc>=1.10.0",
+    "pyvista>=0.48.2",
 ]
