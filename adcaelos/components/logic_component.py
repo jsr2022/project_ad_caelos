@@ -26,7 +26,7 @@ class Logic_Component(Time_Varying_Component, ABC):
     Example: FlightComputer oversees Control (50Hz), Navigation (20Hz), Guidance (5Hz)
     """
 
-    def __init__(self, frequency: int = 50, nextTime: float = 0,
+    def __init__(self, frequency: int = 50, next_time: float = 0,
                 scheduler_priority_enum: Scheduler_Priority_Enums = Scheduler_Priority_Enums.CONTROL,
                 name: str = "Logic_Component", UUID: int = None) -> None:
         """
@@ -34,13 +34,13 @@ class Logic_Component(Time_Varying_Component, ABC):
 
         Args:
             frequency: Execution frequency in Hz (default 50 Hz for control loop)
-            nextTime: Next scheduled execution time
+            next_time: Next scheduled execution time
             scheduler_priority_enum: Priority for scheduling conflicts
             name: Component name
             UUID: Unique identifier
         """
         Time_Varying_Component.__init__(
-            self, frequency, nextTime, scheduler_priority_enum,
+            self, frequency, next_time, scheduler_priority_enum,
             Component_Enums.LOGIC_COMPONENT, name, UUID
         )
 
@@ -50,7 +50,7 @@ class Logic_Component(Time_Varying_Component, ABC):
 
     def act(self) -> None:
         self.subsystemMethod()
-        self.setNextTime()
+        self.set_next_time()
 
     # @abstractmethod
     def logicCenter(self, currState: np.array) -> np.array:
@@ -81,12 +81,12 @@ class Logic_Component(Time_Varying_Component, ABC):
         container = self.getContainerComponent()
         if container is None:
             raise RuntimeError(
-                f"Logic_Component '{self.getName()}' not connected to container")
+                f"Logic_Component '{self.get_name()}' not connected to container")
 
         truth_component = container.getTC()
         if truth_component is None:
             raise RuntimeError(
-                f"Logic_Component '{self.getName()}' container has no Truth_Component")
+                f"Logic_Component '{self.get_name()}' container has no Truth_Component")
 
         # Read current truth state
         currState = truth_component.getCurrState()

@@ -2,7 +2,7 @@
 """
 Unit tests for the ADCAELOS simulation framework.
 This file provides a small regression test framework to verify core
-behaviour, especially time drift prevention in Time_Varying_Component.
+behavior, especially time drift prevention in Time_Varying_Component.
 """
 from __future__ import annotations
 
@@ -25,36 +25,36 @@ from adcaelos.components.container_component import Container_Component
 
 # Minimal concrete component for testing without abstract methods.
 class DummyTVComponent(Time_Varying_Component):
-    def __init__(self, frequency=100, nextTime=0.0, name="DummyTV"):
+    def __init__(self, frequency=100, next_time=0.0, name="DummyTV"):
         Base_Component.__init__(
-            self, comptype=Component_Enums.TIME_VARYING_COMPONENT, name=name, UUID=None
+            self, component_type=Component_Enums.TIME_VARYING_COMPONENT, name=name, UUID=None
         )
-        self.nextTime = float(nextTime)
+        self.next_time = float(next_time)
         self.__frequency = frequency
         self.__period = 1.0 / frequency
-        self.__start_counter_time = self.nextTime
+        self.__start_counter_time = self.next_time
         self.__step_count = 0
         self.__scheduler_priority_enum = Scheduler_Priority_Enums.LOWEST
 
     def act(self) -> None:
         pass
 
-    def setNextTime(self, next_time=None) -> None:
+    def set_next_time(self, next_time=None) -> None:
         if next_time is None:
             self.__step_count += 1
-            self.nextTime = self.__start_counter_time + self.__step_count / self.__frequency
+            self.next_time = self.__start_counter_time + self.__step_count / self.__frequency
         else:
             self.__start_counter_time = float(next_time)
             self.__step_count = 0
-            self.nextTime = self.__start_counter_time
+            self.next_time = self.__start_counter_time
 
-    def getNextTime(self) -> float:
-        return self.nextTime
+    def get_time(self) -> float:
+        return self.next_time
 
-    def getFrequency(self) -> int:
+    def get_frequency(self) -> int:
         return self.__frequency
 
-    def getPeriod(self) -> float:
+    def get_period(self) -> float:
         return self.__period
 
     def getStepCount(self) -> int:
@@ -71,41 +71,41 @@ class ConcreteTruth(Truth_Component):
 class TestTimeDrift(unittest.TestCase):
     def test_no_drift_1m_steps_100hz(self):
         """
-        Regression test: repeated setNextTime(None) should not accumulate drift.
+        Regression test: repeated set_next_time(None) should not accumulate drift.
         1,000,000 steps at 100 Hz should land exactly at 10,000.0 s (within 1e-9).
         """
-        comp = DummyTVComponent(frequency=100, nextTime=0.0)
+        comp = DummyTVComponent(frequency=100, next_time=0.0)
         n = 1_000_000
         for _ in range(n):
-            comp.setNextTime()
-        final = comp.getNextTime()
+            comp.set_next_time()
+        final = comp.get_time()
         expected = 10_000.0
         self.assertLess(abs(final - expected), 1e-9,
                         f"Drift too large: {final} vs {expected} (diff={final-expected})")
 
     def test_reanchor_on_explicit_time(self):
-        comp = DummyTVComponent(frequency=10, nextTime=0.0)
+        comp = DummyTVComponent(frequency=10, next_time=0.0)
         for _ in range(5):
-            comp.setNextTime()
-        self.assertAlmostEqual(comp.getNextTime(), 0.5)
-        comp.setNextTime(100.0)
-        self.assertEqual(comp.getNextTime(), 100.0)
+            comp.set_next_time()
+        self.assertAlmostEqual(comp.get_time(), 0.5)
+        comp.set_next_time(100.0)
+        self.assertEqual(comp.get_time(), 100.0)
         self.assertEqual(comp.getStepCount(), 0)
-        comp.setNextTime()
-        self.assertAlmostEqual(comp.getNextTime(), 100.1)
+        comp.set_next_time()
+        self.assertAlmostEqual(comp.get_time(), 100.1)
 
     def test_set_frequency_reanchors(self):
         class ConcreteTV(Time_Varying_Component):
             def act(self) -> None:
                 pass
-        comp = ConcreteTV(frequency=10, nextTime=0.0, name="Concrete",
-                          Component_Enum=Component_Enums.TIME_VARYING_COMPONENT)
+        comp = ConcreteTV(frequency=10, next_time=0.0, name="Concrete",
+                        Component_Enum=Component_Enums.TIME_VARYING_COMPONENT)
         for _ in range(5):
-            comp.setNextTime()
-        self.assertAlmostEqual(comp.getNextTime(), 0.5)
-        comp.setFrequency(20)
-        comp.setNextTime()
-        self.assertAlmostEqual(comp.getNextTime(), 0.55)
+            comp.set_next_time()
+        self.assertAlmostEqual(comp.get_time(), 0.5)
+        comp.set_frequency(20)
+        comp.set_next_time()
+        self.assertAlmostEqual(comp.get_time(), 0.55)
 
 
 class TestSchedulerTolerance(unittest.TestCase):
@@ -113,13 +113,13 @@ class TestSchedulerTolerance(unittest.TestCase):
         # Basic smoke test: Scheduler can be constructed with tolerance and a container.
         log = Logic_Component(frequency=10, name="L")
         tru = ConcreteTruth(stateNames=["x"], initial_state=np.array([0.0]),
-                              initial_control=np.array([0.0]),
-                              integratorType=Integrator_Enums.RK4, frequency=10, name="T")
+                            initial_control=np.array([0.0]),
+                            integratorType=Integrator_Enums.RK4, frequency=10, name="T")
         container = Container_Component(a_Logic_Component=log, a_Truth_Component=tru,
                                         Time_Varying_Components=[], name="C")
         s = Scheduler(container_components=[container], global_sim_start_time=0.0,
-                      global_sim_end_time=1.0, round2Decimals=6,
-                      end_time_tolerance=0.1)
+                    global_sim_end_time=1.0, round2Decimals=6,
+                    end_time_tolerance=0.1)
         self.assertIsNotNone(s.end_time_tolerance)
 
 

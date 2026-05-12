@@ -7,7 +7,7 @@ Fix critical bugs in the scheduler, establish clean initial state/control initia
 
 ### DO NOT IMMPLEMENT CHANGES THAT HAVE BEEN COMMENTED OUT!
 <!-- ### 1. Fix Scheduler Bugs (`adcaelos/schedulers/scheduler.py`)
-- Replace `getTime()` with `getNextTime()` on lines 58, 59, 63 (method doesn't exist)
+- Replace `getTime()` with `get_time()` on lines 58, 59, 63 (method doesn't exist)
 - Rename `getTemporarySimulationTerminationCondition()` to `is_simulation_configured()` — clarify that it checks whether sim is properly configured, not whether it should terminate
 - The method should return `True` when `global_sim_end_time > 0` (properly configured), `False` otherwise
 - Simplify `run_simulation()` loop condition to: `while self.is_simulation_configured() and self.all_events and self.global_sim_start_time < self.global_sim_end_time:`
@@ -29,7 +29,7 @@ Both `SpringMassDamper` and `Simple_Aircraft` should accept `initial_state` and 
 - Line 59: `return np.array([position_dot, velocity_dot]).T` — the `.T` transpose is wrong for a 1D array of size 2. Should be `return np.array([position_dot, velocity_dot])`
 
 ### 4. Update Logic_Component (`adcaelos/components/logic_component.py`)
-- Add `act()` method override that calls `subsystemMethod()` then advances time via `setNextTime()` — currently `Logic_Component` does NOT implement `act()`, so scheduler's `component.act()` call silently does nothing (inherited abstract method has empty body)
+- Add `act()` method override that calls `subsystemMethod()` then advances time via `set_next_time()` — currently `Logic_Component` does NOT implement `act()`, so scheduler's `component.act()` call silently does nothing (inherited abstract method has empty body)
 - Uncomment `subsystemMethod()` body: call `logicCenter()` and `truth_component.setCurrCntrl(control)`
 - For testing: `logicCenter()` returns zero control stub (zero numpy array matching control size)
 

@@ -9,7 +9,7 @@ class Connect_Container_Component:
 
     def __str__(self) -> str:
         if self.__containerComponent:
-            return f"\nContainer Component Name: {self.__containerComponent.getName()} Container Component UUID: {self.__containerComponent.getUUID()}."
+            return f"\nContainer Component Name: {self.__containerComponent.get_name()} Container Component UUID: {self.__containerComponent.get_UUID()}."
         return "\nContainer Component: None"
 
     def setContainerComponent(self, containerComponent) -> None:

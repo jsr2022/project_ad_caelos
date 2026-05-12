@@ -55,15 +55,15 @@ class Scheduler():
 
         for container in container_components:
             if container.operationalStatus == Scheduler_Enums.ACTIVE: #you don't want to store everything in the heap for memory purposes
-                print(f"Unpacking Container Component: {container.getName()}")
+                print(f"Unpacking Container Component: {container.get_name()}")
                 tempTruthComponent = container.getTC()
                 tempLogicComponent = container.getLC()
-                tempEventTruth = Event(tempTruthComponent.getNextTime(), priority=tempTruthComponent.getSchedulerPriorityEnum() , component=tempTruthComponent, action=f"Container type {tempTruthComponent.getType()}: {tempTruthComponent.getName()} Event")
-                tempEventLogic = Event(tempLogicComponent.getNextTime(), priority=tempLogicComponent.getSchedulerPriorityEnum() , component=tempLogicComponent, action=f"Container type {tempLogicComponent.getType()}: {tempLogicComponent.getName()} Event")
+                tempEventTruth = Event(tempTruthComponent.get_time(), priority=tempTruthComponent.getSchedulerPriorityEnum() , component=tempTruthComponent, action=f"Container type {tempTruthComponent.getType()}: {tempTruthComponent.get_name()} Event")
+                tempEventLogic = Event(tempLogicComponent.get_time(), priority=tempLogicComponent.getSchedulerPriorityEnum() , component=tempLogicComponent, action=f"Container type {tempLogicComponent.getType()}: {tempLogicComponent.get_name()} Event")
                 self.addToHeap(tempEventTruth)
                 self.addToHeap(tempEventLogic)
                 for TVC in container.getTVC():
-                    tempEventTVC = Event(TVC.getNextTime(), priority=TVC.getSchedulerPriorityEnum() , component=TVC, action=f"Container type {TVC.getType()}: {TVC.getName()} Event")
+                    tempEventTVC = Event(TVC.get_time(), priority=TVC.getSchedulerPriorityEnum() , component=TVC, action=f"Container type {TVC.getType()}: {TVC.get_name()} Event")
                     self.addToHeap(tempEventTVC)
 
     # def initialize_dependencies(self, listAllComponents) -> None:
@@ -84,7 +84,7 @@ class Scheduler():
         """
         component = event.component
         if isinstance(component, Time_Varying_Component):
-            new_event = Event(component.getNextTime(), priority=component.getSchedulerPriorityEnum(), component=component, action=f"Container type {component.getType()}: {component.getName()} Event")
+            new_event = Event(component.get_time(), priority=component.getSchedulerPriorityEnum(), component=component, action=f"Container type {component.getType()}: {component.get_name()} Event")
         else:
             raise ValueError("Error: Component is not a Time Varying Component. Cannot Create Next Event.")
         self.addToHeap(new_event)
@@ -130,7 +130,7 @@ class Scheduler():
         while ((self.all_events and self.getTemporarySimulationTerminationCondition())): # and (self.global_sim_slowest_time <= self.global_sim_end_time):
             # we want to continue running events that are behind sim end time even if vehicle has passed the global stop time
             next_event = heapq.heappop(self.all_events)
-            if self._time_lte_end(next_event.component.getNextTime()):
+            if self._time_lte_end(next_event.component.get_time()):
                 print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
                 # Undergo Action
                 next_event.component.act()
@@ -138,7 +138,7 @@ class Scheduler():
                 self.update_event(next_event)
             else:
                 print(f"Executing Event: {next_event.action} is over the end time {next_event.time:.20f}")
-                print(np.round(next_event.component.getNextTime(), decimals=self.round2Decimals))
+                print(np.round(next_event.component.get_time(), decimals=self.round2Decimals))
 
 
     

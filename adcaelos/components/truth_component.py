@@ -3,6 +3,7 @@
 #from python base package(s)
 from sys import exit as sys_exit
 from abc import ABC, abstractmethod
+import array as array
 
 #from other package(s)
 import numpy as np
@@ -21,16 +22,16 @@ from adcaelos.integrators.integrator_factory import IntegratorFactory
 class Truth_Component(Time_Varying_Component, ABC):
     #NEED TO MAKE CHANGES
     #1) Separate states into states that get integrated, just get updated at each time step, 
-    def __init__(self, stateNames: list, initial_state: np.array = None, initial_control: np.array = None, integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, nextTime: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
-        Time_Varying_Component.__init__(self, frequency, nextTime, Scheduler_Priority_Enums.TRUTH, Component_Enum, name, UUID)
+    def __init__(self, stateNames: list, initial_state: np.array = None, initial_control: np.array = None, integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Truth_Component", UUID: int = None) -> None:
+        Time_Varying_Component.__init__(self, frequency, next_time, Scheduler_Priority_Enums.TRUTH, Component_Enum, name, UUID)
         statePos2Names = Sim_Utils.checkUniqueStateNames(stateNames) #will call
         stateNames2Pos = Sim_Utils.convertDictionaryIndex2State(statePos2Names)
 
         #check to make sure number of states with names agrees with number of initial states
         if initial_state.size != len(statePos2Names):
-            errorMsg = f"Number of initial state conditions: {initial_state.size}\
+            error_message = f"Number of initial state conditions: {initial_state.size}\
                         is different than the number of states with names: {len(statePos2Names)}"
-            print(errorMsg)
+            print(error_message)
             sys_exit(1)
 
         self.__statePos2Names = statePos2Names #dictionary of keys (state indices in state vector) to values (state names) 
@@ -67,9 +68,9 @@ class Truth_Component(Time_Varying_Component, ABC):
     
     def checkState(self, currState: np.array) -> None:
         if currState.size != self.__numStates:
-            errorMsg = f"Error: Number of States Initialized: [{self.__numStates}]\n"
-            errorMsg += f"Error: Number of States Declared:  [{currState.size}]"
-            print(errorMsg) #add indices type, also add to logger
+            error_message = f"Error: Number of States Initialized: [{self.__numStates}]\n"
+            error_message += f"Error: Number of States Declared:  [{currState.size}]"
+            print(error_message) #add indices type, also add to logger
             sys_exit(1)
 
     def checkCntrl(self, currCntrl: np.array) -> None:
@@ -77,9 +78,9 @@ class Truth_Component(Time_Varying_Component, ABC):
             self.__numCntrl = currCntrl.size #initialize on first pass 
             return
         if currCntrl.size != self.__numCntrl:
-            errorMsg = f"Error: Number of Cntrls Initialized: [{self.__numCntrl}]\n"
-            errorMsg += f"Error: Number of Cntrls Declared:  [{currCntrl.size}]"
-            print(errorMsg) #add indices type, also add to logger
+            error_message = f"Error: Number of Cntrls Initialized: [{self.__numCntrl}]\n"
+            error_message += f"Error: Number of Cntrls Declared:  [{currCntrl.size}]"
+            print(error_message) #add indices type, also add to logger
             sys_exit(1)
 
     def setCurrState(self, currState: np.array) -> None:
@@ -88,7 +89,7 @@ class Truth_Component(Time_Varying_Component, ABC):
 
     def getCurrState(self) -> np.array:
         if self.__currState is None:
-            raise RuntimeError(f"Truth_Component '{self.getName()}' currState accessed before being set. Provide initial_state or call setCurrState().")
+            raise RuntimeError(f"Truth_Component '{self.get_name()}' currState accessed before being set. Provide initial_state or call setCurrState().")
         return self.__currState
     
     def setCurrCntrl(self, currCntrl: np.array) -> None:
@@ -97,7 +98,7 @@ class Truth_Component(Time_Varying_Component, ABC):
 
     def getCurrCntrl(self) -> np.array:
         if self.__currCntrl is None:
-            raise RuntimeError(f"Truth_Component '{self.getName()}' currCntrl accessed before being set. Provide initial_control or call setCurrCntrl().")
+            raise RuntimeError(f"Truth_Component '{self.get_name()}' currCntrl accessed before being set. Provide initial_control or call setCurrCntrl().")
         return self.__currCntrl
         
     def getIntegratorType(self) -> Integrator_Enums:
@@ -143,19 +144,22 @@ class Truth_Component(Time_Varying_Component, ABC):
         # Run the integrator to compute next state
         next_state = self.integrator.getNextState(
             fieldObject=self,
-            currTime=self.getNextTime(),
-            dt=self.getPeriod()
+            currTime=self.get_time(),
+            dt=self.get_period()
         )
         
         # Update the internal state
         self.setCurrState(next_state)
         
         # Calculate any non-integrated (derived) states
-        self.calculateOtherStates(next_state, self.getCurrCntrl(), self.getNextTime())
+        self.calculateOtherStates(next_state, self.getCurrCntrl(), self.get_time())
 
         #Set time for next action
-        self.setNextTime()
+        self.set_next_time()
     
+    def initialize_data_storage(self, variable_names: str | list[str]) -> None:
+        pass        
+
     def store_data(self, data) -> None:
         """
         Stores data generated by this component.
@@ -163,7 +167,7 @@ class Truth_Component(Time_Varying_Component, ABC):
         Parameters
         ----------
         data : dict
-            Dictionary with keys as data labels (strings) and values as lists of data points.
+            Dictionary with keys as data labels (strings) and values as python arrays of double data points.
         """
         for label, values in data.items():
             if label not in self.__data_storage:

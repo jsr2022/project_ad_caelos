@@ -20,7 +20,7 @@ smd = SpringMassDamper(
     initial_control=initial_control,
     integratorType=Integrator_Enums.RK4,
     frequency=100,
-    nextTime=0.0,
+    next_time=0.0,
     name="Spring_Mass_Damper",
     mass=1.0,
     spring_constant=1.0,
@@ -32,7 +32,7 @@ print("Created Truth Physics Spring Mass Damper")
 
 # Create a dummy Logic_Component
 logic = Logic_Component(frequency=50, name="Dummy_Logic")
-print(f"Logic_Component created: {logic.getName()}")
+print(f"Logic_Component created: {logic.get_name()}")
 
 # Create Container_Component
 container = Container_Component(
@@ -55,7 +55,7 @@ print(f"Scheduler created with end time: {scheduler.global_sim_end_time} [s]")
 
 # Print state before simulation
 print(f"\n--- State before simulation ---")
-print(f"Time: {smd.getNextTime():.3f}s")
+print(f"Time: {smd.get_time():.3f}s")
 print(f"State: {smd.getCurrState()}")
 print(f"Control: {smd.getCurrCntrl()}")
 
@@ -65,7 +65,7 @@ scheduler.run_simulation(None)
 
 # Print state after simulation
 print(f"\n--- State after simulation ---")
-print(f"Time: {smd.getNextTime():.3f}s")
+print(f"Time: {smd.get_time():.3f}s")
 print(f"State: {smd.getCurrState()}")
 print(f"Control: {smd.getCurrCntrl()}")
 

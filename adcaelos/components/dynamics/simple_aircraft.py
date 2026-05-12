@@ -18,8 +18,8 @@ from adcaelos.atmosphere.atmosphere_models import Atmosphere_Models
 
 class Simple_Aircraft(Truth_Component):
 
-    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(20), initial_control: np.array = np.zeros(4), integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, nextTime: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Simple_Aircraft", UUID: int = None) -> None:
-        super().__init__(stateNames, initial_state, initial_control, integratorType, frequency, nextTime, Component_Enum, name, UUID)
+    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(20), initial_control: np.array = np.zeros(4), integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum = Component_Enums.TRUTH_COMPONENT, name: str = "Simple_Aircraft", UUID: int = None) -> None:
+        super().__init__(stateNames, initial_state, initial_control, integratorType, frequency, next_time, Component_Enum, name, UUID)
         self.Speed = 0.0
 
     def __str__(self) -> str:

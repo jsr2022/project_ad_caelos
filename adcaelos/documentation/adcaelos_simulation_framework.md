@@ -118,10 +118,10 @@ graph TD
     - have current version working
     - needs improved termination criteria
     - vehicle specific termination criteria (where to implement?)
-    - ~~**Numerical Precision** problem with `setNextTime()` inside of `time_varying_component.py`~~ **[RESOLVED]**
+    - ~~**Numerical Precision** problem with `set_next_time()` inside of `time_varying_component.py`~~ **[RESOLVED]**
         - ~~leads to scheduler skipping steps or adding additional steps~~
         - ~~leads to integration problems as either the `dt` or the `currTime` is off~~
-        - **Fix**: Replaced additive accumulation with an integer step counter (`nextTime = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `setFrequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `documentation/plans/DONE_fix_numerical_drift_error.md`.
+        - **Fix**: Replaced additive accumulation with an integer step counter (`next_time = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `set_frequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `documentation/plans/DONE_fix_numerical_drift_error.md`.
 - **Enum Misuse**: Priority enums use `Flag` but are used as integer values - may cause unexpected behavior
     - `scheduler_priority_enums.py` have been updated
     - unsure if other enums need to switch - currently set as `Auto()` for the following:

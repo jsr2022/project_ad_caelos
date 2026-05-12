@@ -25,10 +25,10 @@ class SpringMassDamper(Truth_Component):
         Truth_Component (_type_): _description_
     """
 
-    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(2), initial_control: np.array = np.zeros(1), integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, nextTime: float = 0, Component_Enum=Component_Enums.TRUTH_COMPONENT, name: str = "Spring_Mass_Damper", UUID: int = None,
+    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(2), initial_control: np.array = np.zeros(1), integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum=Component_Enums.TRUTH_COMPONENT, name: str = "Spring_Mass_Damper", UUID: int = None,
                 mass: float = 1.0, spring_constant: float = 1.0, damping_constant: float = 1.0) -> None:
         
-        super().__init__(stateNames, initial_state, initial_control, integratorType, frequency, nextTime, Component_Enum, name, UUID)
+        super().__init__(stateNames, initial_state, initial_control, integratorType, frequency, next_time, Component_Enum, name, UUID)
         self.mass = mass
         self.spring_constant = spring_constant
         self.damping_constant = damping_constant

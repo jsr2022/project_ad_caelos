@@ -29,7 +29,7 @@ class Container_Component(Base_Component):
     def __str__(self) -> str:
         msgStr_TVC = ""
         for TVC in self.TVCs:
-            # msgStr_TVC = msgStr_TVC + f"\n{TVC.getType()} UUID: {TVC.getUUID()} Name: {TVC.getName()}"
+            # msgStr_TVC = msgStr_TVC + f"\n{TVC.getType()} UUID: {TVC.get_UUID()} Name: {TVC.get_name()}"
             msgStr_TVC = msgStr_TVC + f"\n{TVC.__str__()}"
         msgStr = super().__str__()
         msgStr = msgStr + f"\nOperational Status: {self.operationalStatus}"
@@ -38,8 +38,8 @@ class Container_Component(Base_Component):
         msgStr = msgStr + "\n---------------Time Varying Components---------------"\
                         + msgStr_TVC
 
-        # msgStr = msgStr + f"\n{self.LC.getType()} UUID: {self.LC.getUUID()} Name: {self.LC.getName()}"\
-        #                 + f"\n{self.TC.getType()} UUID: {self.TC.getUUID()} Name: {self.TC.getName()}"\
+        # msgStr = msgStr + f"\n{self.LC.getType()} UUID: {self.LC.get_UUID()} Name: {self.LC.get_name()}"\
+        #                 + f"\n{self.TC.getType()} UUID: {self.TC.get_UUID()} Name: {self.TC.get_name()}"\
         #                 + "\n---------------Time Varying Components---------------"\
         #                 + msgStr_TVC
         
