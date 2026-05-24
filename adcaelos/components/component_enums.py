@@ -8,3 +8,4 @@ class Component_Enums(Flag):
     LOGIC_COMPONENT          = auto()
     CONTAINER_COMPONENT      = auto()
     TIME_VARYING_COMPONENT   = auto()
+    STORAGE_COMPONENT        = auto()
