@@ -28,10 +28,12 @@ class Truth_Component(Time_Varying_Component, ABC):
                 initial_state: np.array,
                 initial_control: np.array,
                 control_names: str | list[str] = None,
-                other_states_names: str | list = None,
+                other_states_names: str | list[str] = None,
                 initial_other_states: np.array = None,
                 integratorType: Integrator_Enums = Integrator_Enums.RK4,
-                frequency: int = 100, next_time: float = 0,
+                frequency: int = 100, 
+                next_time: float = 0,
+                num_stored_steps: int = 100,
                 Component_Enum = Component_Enums.TRUTH_COMPONENT,
                 name: str = "Truth_Component",
                 UUID: int = None) -> None:
@@ -44,19 +46,22 @@ class Truth_Component(Time_Varying_Component, ABC):
                                         UUID)
         
         self.__integratorType = integratorType
-        self.__numStates = initial_state.size
-        self.__numCntrl = initial_control.size
+        self.__num_states = initial_state.size
+        self.__num_control = initial_control.size
         self.__currState = initial_state
         self.__currCntrl = initial_control
         # Create/get the integrator instance for this component
         self.integrator = IntegratorFactory.create(self.__integratorType)
 
         #Creating Data Storage For Truth State Data and Control Data
-        self.state_data = Data_Storage(state_names, initial_state, next_time, name="truth_state_data")
-        self.control_data = Data_Storage(control_names, initial_control, next_time, name="control_data")
+        self.state_data = Data_Storage(variable_names=state_names, initial_values=initial_state, next_time=next_time, num_stored_steps=num_stored_steps, name="truth_state_data")
+        self.control_data = Data_Storage(variable_names=control_names, initial_values=initial_control, next_time=next_time, num_stored_steps=num_stored_steps, name="control_data")
+        
         if other_states_names is not None and initial_other_states is not None:
             self.__valid_other_states = True
-            self.other_state_data = Data_Storage(other_states_names, initial_other_states, next_time, name="truth_other_state_data")
+            self.__num_other_states = initial_other_states.size
+            self.__other_states = initial_other_states
+            self.other_state_data = Data_Storage(variable_names=other_states_names, initial_values=initial_other_states, next_time=next_time, num_stored_steps=num_stored_steps, name="truth_other_state_data")
 
 
     def __str__(self) -> str:
@@ -65,6 +70,9 @@ class Truth_Component(Time_Varying_Component, ABC):
         msgStr = msgStr + Sim_Utils.strStateNames(self.state_data.get_variable_names_2_position())\
                         + f"\nCurrent State:\n{self.getCurrState()}"\
                         + f"\nCurrent Control:\n{self.getCurrCntrl()}"
+        if self.__valid_other_states:
+            msgStr = msgStr + f"\nOther States:\n{self.get_other_states()}"
+
         return msgStr
 
     @abstractmethod
@@ -82,19 +90,26 @@ class Truth_Component(Time_Varying_Component, ABC):
         Must Be Implemented at the subclass level"""
     
     def checkState(self, currState: np.array) -> None:
-        if currState.size != self.__numStates:
-            error_message = f"Error: Number of States Initialized: [{self.__numStates}]\n"
+        if currState.size != self.__num_states:
+            error_message = f"Error: Number of States Initialized: [{self.__num_states}]\n"
             error_message += f"Error: Number of States Declared:  [{currState.size}]"
             print(error_message) #add indices type, also add to logger
             sys_exit(1)
 
     def checkCntrl(self, currCntrl: np.array) -> None:
-        if self.__numCntrl == -1:
-            self.__numCntrl = currCntrl.size #initialize on first pass 
-            return
-        if currCntrl.size != self.__numCntrl:
-            error_message = f"Error: Number of Cntrls Initialized: [{self.__numCntrl}]\n"
+        # if self.__num_control == -1:
+        #     self.__num_control = currCntrl.size #initialize on first pass 
+        #     return
+        if currCntrl.size != self.__num_control:
+            error_message = f"Error: Number of Cntrls Initialized: [{self.__num_control}]\n"
             error_message += f"Error: Number of Cntrls Declared:  [{currCntrl.size}]"
+            print(error_message) # TODO add indices type, also add to logger
+            sys_exit(1)
+
+    def checkOtherStates(self, other_states: np.array) -> None:
+        if other_states.size != self.__num_other_states:
+            error_message = f"Error: Number of Other States Initialized: [{self.__num_other_states}]\n"
+            error_message += f"Error: Number of Other States Declared:  [{other_states.size}]"
             print(error_message) # TODO add indices type, also add to logger
             sys_exit(1)
 
@@ -133,32 +148,45 @@ class Truth_Component(Time_Varying_Component, ABC):
         Called by the scheduler during event execution.
         """
         # Run the integrator to compute next state
-        next_state = self.integrator.getNextState(
+        state = self.integrator.getNextState(
             fieldObject=self,
             currTime=self.get_time(),
             dt=self.get_period()
         )
         
         # Update the internal state
-        self.setCurrState(next_state)
+        self.setCurrState(state)
         
         # Calculate any non-integrated (derived) states
         if self.__valid_other_states:
-            other_states = self.calculateOtherStates(next_state, self.getCurrCntrl(), self.get_time())
+            other_states = self.calculateOtherStates(state, self.getCurrCntrl(), self.get_time())
             self.set_other_states(other_states)
-            data = {} #TODO POPULATE REST OF DATA FOR DATA STORAGE
-        else:
-            data = {}
-        
+
+        self.store_states()
         #Set time for next action
         self.set_next_time()
-        # TODO Store data in data storage component
+
+
+    def store_states(self) -> None:
+        """Stores current state control, and if enabled, other states in the respective data storage components.
+        Called at the end of the act method to store data after state has been updated and other states have been calculated."""
+        #TODO fix method as input is not correct, also need to update data storage method make it assume all data is logged at once.
+        self.state_data.store_data(self.get_time(), self.getCurrState())
+        self.control_data.store_data(self.get_time(), self.getCurrCntrl())
+        if self.__valid_other_states:
+            self.other_state_data.store_data(self.get_time(), self.get_other_states())
 
     def getNumStates(self) -> int:
-        return self.__numStates
+        return self.__num_states
     
     def getNumCntrl(self) -> int:
-        return self.__numCntrl
+        return self.__num_control
+    
+    def getNumOtherStates(self) -> int:
+        if not self.__valid_other_states:
+            raise RuntimeError(f"Truth_Component '{self.get_name()}' other_states has not been enabled")
+        return self.__num_other_states
     
     def print_states(self) -> str:
+        #TODO implement method to print current state, control, and other states in a nice format
         pass

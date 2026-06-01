@@ -8,11 +8,11 @@ import numpy as np
 
 class Sim_Utils:
     @staticmethod
-    def checkUniqueStateNames(stateNames:list) -> None:
+    def checkUniqueStateNames(stateNames:list) -> list[str]:
         stateNames = [item.lower() for item in stateNames]
-        uniqueStateNames = set(stateNames)
+        uniqueStateNames = list(set(stateNames))
         if len(stateNames) == len(uniqueStateNames):
-            return Sim_Utils.generateDictionaryIndex2State(stateNames)
+            return uniqueStateNames
         else:
             print("Error: State Names are not Unique!")
             print(Sim_Utils.strStateNames(Sim_Utils.generateDictionaryIndex2State(stateNames)))
@@ -21,11 +21,18 @@ class Sim_Utils:
 
     @staticmethod
     def generateDictionaryIndex2State(stateNames:list) -> dict:
-        statePos2Names = dict(list(enumerate(stateNames)))
+        """_Generates a dictionary mapping state indices to state names.
+        The key is the number and the value is the state name. 
+        Keys are indexed at one as time is always the first 'hidden' state._"""
+        statePos2Names = dict(list(enumerate(stateNames, start=1)))
         return statePos2Names
     
     @staticmethod
     def convertDictionaryIndex2State(statePos2Names:dict) -> dict:
+        """_Converts a dictionary mapping state indices to 
+        state names to a dictionary mapping state names to state indices.
+        The key is the state name and the value is the number. 
+        Keys are indexed at one as time is always the first 'hidden' state._"""
         stateNames2Pos = {v: k for k, v in statePos2Names.items()}
         return stateNames2Pos
 
