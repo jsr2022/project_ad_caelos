@@ -10,6 +10,9 @@ adcaelos/
 │   ├── time_varying_component.py
 │   ├── truth_component.py
 │   ├── logic_component.py
+│   ├── connect_container_component.py  # Bidirectional mixin linking components ↔ container
+│   ├── data_storage.py               # State/control time-history storage
+│   ├── component_enums.py            # Component type enum definitions
 │   ├── dynamics/
 │   │   ├── simple_aircraft.py
 │   │   └── spring_mass_damper.py
@@ -19,6 +22,7 @@ adcaelos/
 │   ├── integrator_meta_interface.py
 │   ├── integrator_enums.py
 │   ├── rk4.py
+│   ├── integrator_factory.py         # Factory pattern for creating integrator instances
 │   └── (future: rk5, euler, etc.)
 │
 ├── schedulers/              # Execution management
@@ -26,11 +30,11 @@ adcaelos/
 │   ├── scheduler_enums.py
 │   └── scheduler_priority_enums.py
 │
-├── configuration/           # NEW - Config loading
+├── configuration/           # NEW - Config loading (not yet implemented)
 │   ├── config_loader.py
 │   └── config_schema.py
 │
-├── serialization/           # NEW - Save/load
+├── serialization/           # NEW - Save/load (not yet implemented)
 │   ├── serializers.py
 │   └── deserializers.py
 │
@@ -39,8 +43,10 @@ adcaelos/
     ├── rotations/
     │   ├── euler.py
     │   └── quaternion.py
+    ├── units.py             # Unit conversion utilities used by dynamics models
     └── atmosphere/
-        └── atmosphere_models.py
+        ├── atmosphere_models.py
+        └── test.py          # Atmosphere model test script
 ```
 
 ---
@@ -57,9 +63,10 @@ graph TD
     Time_Varying_Component --> Logic_Component
     Truth_Component --> Simple_Aircraft
     Truth_Component --> SpringMassDamper
-    Container_Component --> LC[Logic Component]
-    Container_Component --> TC[Truth Component]
-    Container_Component --> TVC[Time Varying Components]
+    Connect_Container_Component --> Time_Varying_Component
+    Container_Component -->|has| LC[Logic Component]
+    Container_Component -->|has| TC[Truth Component]
+    Container_Component -->|has| TVC[Time Varying Components]
 ```
 
 ### Goal State (Rename Container_Component → Entity):
@@ -91,9 +98,9 @@ graph TD
 
 ## Section 4: Key Concepts
 
-1. **Entity** - Groups related components (Truth + Logic + Time-Varying)
+1. **Entity** - Groups related components (Truth + Logic + Time-Varying) as a **composition container** that groups related components bidirectionally via `Connect_Container_Component`
 2. **Truth Component** - Models physics/dynamics (state integration)
-3. **Logic Component** - Control algorithms (runs at various frequencies (guidance, navigation, control, seeker, & etc.))
+3. **Logic Component** - Control algorithms (runs at various frequencies (guidance, navigation, control, seeker, & etc.)) - note: `Logic_Component.logicCenter` is currently optional (not enforced as abstract)
 4. **Time-Varying Component** - Base for anything with time-driven execution
 5. **Integrator** - Pluggable numerical methods
 6. **Scheduler** - Manages simulation execution timing
@@ -106,6 +113,10 @@ graph TD
 |--------|---------------|------------|
 | Scheduler | Stub methods (pass) | Full implementation with dependency graph, topological sort |
 | Entity | Named Container_Component | Renamed to Entity |
+| Connect_Container_Component | Implemented (composition/mixin) | Maintained as core pattern |
+| Data_Storage | Implemented | Enhanced with additional features |
+| Integrator_Factory | Implemented (pluggable integrator registry) | Extended with more integrator types |
+| Units utility | Implemented | Expanded unit conversions |
 | Configuration | Not implemented | YAML/JSON/Code support |
 | Serialization | Not implemented | Save/load simulation state |
 | Abstract Methods | Some commented out | Properly enforced |
@@ -122,13 +133,14 @@ graph TD
         - ~~leads to scheduler skipping steps or adding additional steps~~
         - ~~leads to integration problems as either the `dt` or the `currTime` is off~~
         - **Fix**: Replaced additive accumulation with an integer step counter (`next_time = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `set_frequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `documentation/plans/DONE_fix_numerical_drift_error.md`.
-- **Enum Misuse**: Priority enums use `Flag` but are used as integer values - may cause unexpected behavior
-    - `scheduler_priority_enums.py` have been updated
-    - unsure if other enums need to switch - currently set as `Auto()` for the following:
-    - `integrator_enums.py`
-        - `component_enums.py`
-        - `scheduler_enums.py`
-- **Abstract Methods**: Several methods marked as `@abstractmethod` have decorators commented out, making them optional rather than required
+- **Enum Misuse**: 
+    - **RESOLVED**: `Scheduler_Priority_Enums` — fixed to `IntEnum` ✅
+    - **STILL EXISTS**: `Integrator_Enums` uses `Flag` with `auto()` — potential misuse
+    - **STILL EXISTS**: `Component_Enums` uses `Flag` with `auto()` — potential misuse  
+    - **STILL EXISTS**: `Scheduler_Enums` uses `Flag` with `auto()` — potential misuse
+- **Abstract Methods**: 
+    - **PARTIALLY RESOLVED**: Abstract methods in `Truth_Component` (`statesDot`, `calculateOtherStates`) are properly enforced as `@abstractmethod`. However, `Logic_Component.logicCenter` still has `@abstractmethod` commented out (line 55), making it optional rather than required.
+    - **Update needed**: Uncomment `@abstractmethod` decorator for `Logic_Component.logicCenter`
 - **Event System**: Requirements specify event-driven communication
     - preliminary version implemented in Event.py
 - **No Serialization**: No save/load functionality for simulation state
