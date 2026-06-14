@@ -112,7 +112,7 @@ class TestSchedulerTolerance(unittest.TestCase):
     def test_tolerance_used_when_set(self):
         # Basic smoke test: Scheduler can be constructed with tolerance and a container.
         log = Logic_Component(frequency=10, name="L")
-        tru = ConcreteTruth(stateNames=["x"], initial_state=np.array([0.0]),
+        tru = ConcreteTruth(state_names=["x"], initial_state=np.array([0.0]),
                             initial_control=np.array([0.0]),
                             integratorType=Integrator_Enums.RK4, frequency=10, name="T")
         container = Container_Component(a_Logic_Component=log, a_Truth_Component=tru,
