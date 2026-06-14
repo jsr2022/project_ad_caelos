@@ -55,7 +55,7 @@ class Scheduler():
 
         for container in container_components:
             if container.operationalStatus == Scheduler_Enums.ACTIVE: #you don't want to store everything in the heap for memory purposes
-                print(f"Unpacking Container Component: {container.get_name()}")
+                # print(f"Unpacking Container Component: {container.get_name()}")
                 tempTruthComponent = container.getTC()
                 tempLogicComponent = container.getLC()
                 tempEventTruth = Event(tempTruthComponent.get_time(), priority=tempTruthComponent.getSchedulerPriorityEnum() , component=tempTruthComponent, action=f"Container type {tempTruthComponent.getType()}: {tempTruthComponent.get_name()} Event")
