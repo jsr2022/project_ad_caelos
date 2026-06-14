@@ -45,8 +45,8 @@ class Logic_Component(Time_Varying_Component, ABC):
         )
 
     def __str__(self) -> str:
-        msgStr = Time_Varying_Component.__str__(self)
-        return msgStr
+        message_string = Time_Varying_Component.__str__(self)
+        return message_string
 
     def act(self) -> None:
         self.subsystemMethod()

@@ -27,12 +27,12 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         self.__step_count = 0
         
     def __str__(self) -> str:
-        msgStr = Base_Component.__str__(self)
-        msgStr = msgStr + "\nThis Component is a member of the following container:"\
+        message_string = Base_Component.__str__(self)
+        message_string = message_string + "\nThis Component is a member of the following container:"\
                         + Connect_Container_Component.__str__(self)
 
-        msgStr = msgStr + f"\nNext Time: {self.get_time()} [s].\nFrequency: {self.get_frequency()} [Hz].\nPeriod: {self.get_period()} [s]."
-        return msgStr
+        message_string = message_string + f"\nNext Time: {self.get_time()} [s].\nFrequency: {self.get_frequency()} [Hz].\nPeriod: {self.get_period()} [s]."
+        return message_string
     
     @abstractmethod
     def act(self) -> None:

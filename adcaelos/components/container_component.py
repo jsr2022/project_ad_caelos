@@ -27,23 +27,23 @@ class Container_Component(Base_Component):
 
 
     def __str__(self) -> str:
-        msgStr_TVC = ""
+        message_string_TVC = ""
         for TVC in self.TVCs:
-            # msgStr_TVC = msgStr_TVC + f"\n{TVC.getType()} UUID: {TVC.get_UUID()} Name: {TVC.get_name()}"
-            msgStr_TVC = msgStr_TVC + f"\n{TVC.__str__()}"
-        msgStr = super().__str__()
-        msgStr = msgStr + f"\nOperational Status: {self.operationalStatus}"
-        msgStr = msgStr + f"\n{self.LC.__str__()}"
-        msgStr = msgStr + f"\n{self.TC.__str__()}"
-        msgStr = msgStr + "\n---------------Time Varying Components---------------"\
-                        + msgStr_TVC
+            # message_string_TVC = message_string_TVC + f"\n{TVC.getType()} UUID: {TVC.get_UUID()} Name: {TVC.get_name()}"
+            message_string_TVC = message_string_TVC + f"\n{TVC.__str__()}"
+        message_string = super().__str__()
+        message_string = message_string + f"\nOperational Status: {self.operationalStatus}"
+        message_string = message_string + f"\n{self.LC.__str__()}"
+        message_string = message_string + f"\n{self.TC.__str__()}"
+        message_string = message_string + "\n---------------Time Varying Components---------------"\
+                        + message_string_TVC
 
-        # msgStr = msgStr + f"\n{self.LC.getType()} UUID: {self.LC.get_UUID()} Name: {self.LC.get_name()}"\
+        # message_string = message_string + f"\n{self.LC.getType()} UUID: {self.LC.get_UUID()} Name: {self.LC.get_name()}"\
         #                 + f"\n{self.TC.getType()} UUID: {self.TC.get_UUID()} Name: {self.TC.get_name()}"\
         #                 + "\n---------------Time Varying Components---------------"\
-        #                 + msgStr_TVC
+        #                 + message_string_TVC
         
-        return msgStr
+        return message_string
     
     def getLC(self) -> Logic_Component:
         return self.LC

@@ -1,7 +1,7 @@
 # spring_mass_damper.py
 
 # from python base package(s)
-from sys import exit as sys_exit
+#from sys import exit as system_exit
 
 # from other package(s)
 import numpy as np
@@ -25,14 +25,14 @@ class SpringMassDamper(Truth_Component):
         Truth_Component (_type_): _description_
     """
 
-    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(2), initial_control: np.array = np.zeros(1), integratorType: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum=Component_Enums.TRUTH_COMPONENT, name: str = "Spring_Mass_Damper", UUID: int = None,
+    def __init__(self, stateNames: list, initial_state: np.array = np.zeros(2), initial_control: np.array = np.zeros(1), integrator_type: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum=Component_Enums.TRUTH_COMPONENT, name: str = "Spring_Mass_Damper", UUID: int = None,
                 mass: float = 1.0, spring_constant: float = 1.0, damping_constant: float = 1.0) -> None:
         
         super().__init__(state_names=stateNames, 
                         initial_state=initial_state, 
                         control_names="external_force",
                         initial_control=initial_control,
-                        integratorType=integratorType, 
+                        integrator_type=integrator_type, 
                         frequency=frequency,
                         next_time=next_time, 
                         Component_Enum=Component_Enum, 
@@ -43,12 +43,12 @@ class SpringMassDamper(Truth_Component):
         self.damping_constant = damping_constant
 
     def __str__(self) -> str:
-        msgStr = super().__str__()
-        msgStr = msgStr + "\n--Spring Mass Damper Dynamics--"
-        msgStr = msgStr + f"\nMass: {self.mass} [kg]"
-        msgStr = msgStr + f"\nSpring Constant: {self.spring_constant} [N/m]"
-        msgStr = msgStr + f"\nDamping Constant: {self.damping_constant} [N*s/m]"
-        return msgStr
+        message_string = super().__str__()
+        message_string = message_string + "\n--Spring Mass Damper Dynamics--"
+        message_string = message_string + f"\nMass: {self.mass} [kg]"
+        message_string = message_string + f"\nSpring Constant: {self.spring_constant} [N/m]"
+        message_string = message_string + f"\nDamping Constant: {self.damping_constant} [N*s/m]"
+        return message_string
     
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         """

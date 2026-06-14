@@ -23,9 +23,9 @@ class Simple_Aircraft(Truth_Component):
         self.Speed = 0.0
 
     def __str__(self) -> str:
-        msgStr = super().__str__()
-        msgStr = msgStr + "\n--Simple Aircraft Dynamics--"
-        return msgStr
+        message_string = super().__str__()
+        message_string = message_string + "\n--Simple Aircraft Dynamics--"
+        return message_string
     
     def statesDot(self, currState: np.array, currCntrl: np.array, currTime: float) -> np.array:
         super().checkState(currState) #I want to know immediately if there is an error
