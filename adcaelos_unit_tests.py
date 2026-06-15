@@ -114,7 +114,7 @@ class TestSchedulerTolerance(unittest.TestCase):
         log = Logic_Component(frequency=10, name="L")
         tru = ConcreteTruth(state_names=["x"], initial_state=np.array([0.0]),
                             initial_control=np.array([0.0]),
-                            integratorType=Integrator_Enums.RK4, frequency=10, name="T")
+                            integrator_type=Integrator_Enums.RK4, frequency=10, name="T")
         container = Container_Component(a_Logic_Component=log, a_Truth_Component=tru,
                                         Time_Varying_Components=[], name="C")
         s = Scheduler(container_components=[container], global_sim_start_time=0.0,

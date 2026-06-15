@@ -131,14 +131,12 @@ class Scheduler():
             # we want to continue running events that are behind sim end time even if vehicle has passed the global stop time
             next_event = heapq.heappop(self.all_events)
             if self._time_lte_end(next_event.component.get_time()):
-                print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
+                # print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
                 # Undergo Action
                 next_event.component.act()
                 self.global_sim_slowest_time = next_event.time
                 self.update_event(next_event)
             else:
-                print(f"Executing Event: {next_event.action} is over the end time {next_event.time:.20f}")
-                print(np.round(next_event.component.get_time(), decimals=self.round2Decimals))
-
-
-    
+                pass
+                # print(f"Executing Event: {next_event.action} is over the end time {next_event.time:.20f}")
+                # print(np.round(next_event.component.get_time(), decimals=self.round2Decimals))

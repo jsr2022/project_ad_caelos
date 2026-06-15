@@ -180,9 +180,31 @@ class Data_Storage(Base_Component):  # pylint: disable=invalid-name
         # # No label(s) provided — return everything
         # return self.__data_storage
 
-    def get_state_position_2_names(self, indices=None):
+    def get_state_position_2_names(self) -> dict:
+        """
+        Returns the dictionary mapping state indices to state names.
+
+        Returns
+        -------
+        dict
+            _A dictionary where keys are state indices (integers) and values are state names (strings)._
+        """
+        return self.__state_position_2_names
+    
+    def get_variable_names_2_position(self) -> dict:
+        """
+        Returns the dictionary mapping state names to state indices.
+
+        Returns
+        -------
+        dict
+            A dictionary where keys are state names (strings) and values are state indices (integers).
+        """
+        return self.__variable_names_2_position
+    
+    def convert_state_position_2_names(self, indices=None) -> list:
         if indices is None:
-            return np.array(list(self.__state_position_2_names.values()))
+            return list(self.__state_position_2_names.values())
         elif isinstance(indices, int):
             if indices not in self.__state_position_2_names:
                 raise KeyError(f"indices {indices} not found in dictionary")
@@ -199,7 +221,7 @@ class Data_Storage(Base_Component):  # pylint: disable=invalid-name
             print("Error: Improper Key Type Not In Dictionary")
             system_exit(1)
 
-    def get_variable_names_2_position(self, indices=None) -> list:
+    def convert_variable_names_2_position(self, indices=None) -> list:
         if indices is None:
             return list(self.__variable_names_2_position.values())
         elif isinstance(indices, str):

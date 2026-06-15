@@ -19,14 +19,14 @@ from adcaelos.atmosphere.atmosphere_models import Atmosphere_Models
 class SpringMassDamper(Truth_Component):
     """
     Spring Mass Damper Class - Example Truth Component for a simple 1D spring mass damper system
-    inputs: spring constant [kg*m/s^2] equivalently [N/m], damping constant [kg*m/s] equivalently [N*s/m], mass [kg]
+    inputs: spring constant [kg*m/s^2] or [N/m], damping constant [kg*m/s] or [N*s/m], mass [kg]
     states: position [m], velocity [m/s]
     Args:
         Truth_Component (_type_): _description_
     """
 
     def __init__(self, stateNames: list, initial_state: np.array = np.zeros(2), initial_control: np.array = np.zeros(1), integrator_type: Integrator_Enums = Integrator_Enums.RK4, frequency: int = 100, next_time: float = 0, Component_Enum=Component_Enums.TRUTH_COMPONENT, name: str = "Spring_Mass_Damper", UUID: int = None,
-                 mass: float = 1.0, spring_constant: float = 1.0, damping_constant: float = 1.0) -> None:
+                mass: float = 1.0, spring_constant: float = 1.0, damping_constant: float = 1.0) -> None:
 
         super().__init__(state_names=stateNames,
                         initial_state=initial_state,

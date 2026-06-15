@@ -84,7 +84,7 @@ class Truth_Component(Time_Varying_Component, ABC):
     def __str__(self) -> str:
         msg_str = Time_Varying_Component.__str__(self)
         msg_str = msg_str + f"\nIntegrator Type: {self.getIntegratorType()}"
-        msg_str = msg_str + Sim_Utils.state_names_string(self.state_data.get_variable_names_2_position())\
+        msg_str = msg_str + Sim_Utils.state_names_string(self.state_data.get_state_position_2_names())\
                         + f"\nCurrent State:\n{self.getCurrState()}"
         if self.__valid_control:
             msg_str = msg_str + f"\nCurrent Control:\n{self.getCurrCntrl()}"
@@ -163,7 +163,7 @@ class Truth_Component(Time_Varying_Component, ABC):
         # Run the integrator to compute next state
         state = self.integrator.getNextState(
             fieldObject=self,
-            current_time=self.get_time(),
+            currTime=self.get_time(),
             dt=self.get_period()
         )
         
@@ -174,10 +174,10 @@ class Truth_Component(Time_Varying_Component, ABC):
         if self.__valid_other_states:
             other_states = self.calculateOtherStates(state, self.getCurrCntrl(), self.get_time())
             self.set_other_states(other_states)
-
+        self.set_next_time() # we just calculated the data at this time step!
         self.store_states()
         #Set time for next action
-        self.set_next_time()
+        
 
 
     def store_states(self) -> None:

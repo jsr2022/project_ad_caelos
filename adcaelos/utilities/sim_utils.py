@@ -76,13 +76,20 @@ class Sim_Utils:
         """
         if state_names is None:
             state_names = Sim_Utils.create_state_names(num_states)
+            state_names = Sim_Utils.checkUniqueStateNames(state_names)
+
+        elif isinstance(state_names, str):
+            state_names = [state_names]
+            state_names = Sim_Utils.checkUniqueStateNames(state_names)
 
         elif len(state_names) != num_states:
             error_message = f"Number of state names provided: {len(state_names)} is different than the number of states: {num_states}"
             Sim_Utils.get_logging_object().error(error_message)
             system_exit(1)
+        else:
+            state_names = Sim_Utils.checkUniqueStateNames(state_names)
         
-        return Sim_Utils.checkUniqueStateNames(state_names)
+        return state_names
 
     @staticmethod
     def create_state_names(num_states: int) -> list[str]:
