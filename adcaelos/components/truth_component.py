@@ -1,4 +1,4 @@
-#truth_component.py
+#truth_component.py # pylint: disable=missing-module-docstring
 
 #from python base package(s)
 from sys import exit as system_exit

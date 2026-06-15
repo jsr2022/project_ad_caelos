@@ -1,4 +1,4 @@
-# logic_component.py
+# logic_component.py # pylint: disable=missing-module-docstring
 
 # from python base package(s)
 from abc import ABC, abstractmethod

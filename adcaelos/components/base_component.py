@@ -1,12 +1,20 @@
-#base_component.py
+# base_component.py # pylint: disable=missing-module-docstring
 #Imports:
 import numpy as np
 import uuid
-# from sys import exit
-from adcaelos.components.component_enums import Component_Enums
-class Base_Component:
 
-    def __init__(self, component_type: Component_Enums = Component_Enums.BASE_COMPONENT, name: str = "Base_Component", UUID: int = None) -> None:
+from adcaelos.components.component_enums import Component_Enums
+
+class Base_Component: # pylint: disable=invalid-name
+    """
+    _Fundamental Base Class for All of Adcaelos_
+    """
+
+    def __init__(self, 
+                component_type: Component_Enums = Component_Enums.BASE_COMPONENT,
+                name: str = "Base_Component",
+                UUID: int = None) -> None:
+        
         self.__type = component_type
         self.__name = name
         if UUID is None:
