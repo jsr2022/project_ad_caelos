@@ -30,6 +30,7 @@ class Truth_Component(Time_Varying_Component, ABC):
                 control_names: str | list[str] = None,
                 initial_other_states: np.array = None,
                 other_states_names: str | list[str] = None,
+                abbreviations: str | list[str] = None,
                 integrator_type: Integrator_Enums = Integrator_Enums.RK4,
                 frequency: int = 100,
                 next_time: float = 0,
@@ -59,8 +60,23 @@ class Truth_Component(Time_Varying_Component, ABC):
         # Create/get the integrator instance for this component
         self.integrator = IntegratorFactory.create(self.__integrator_type)
 
+        if abbreviations is not None:
+            if isinstance(abbreviations, str):
+                abbreviations = [abbreviations]
+            state_abbreviation = abbreviations[0]
+            control_abbreviation = abbreviations[1] if len(abbreviations) > 1 else "u"
+            other_states_abbreviation = abbreviations[2] if len(abbreviations) > 2 else "z"
+        else:
+            state_abbreviation = "x"
+            control_abbreviation = "u"
+            other_states_abbreviation = "z"
+
+        self.state_abbreviation = state_abbreviation
+        self.control_abbreviation = control_abbreviation
+        self.other_states_abbreviation = other_states_abbreviation
+
         #Checking State Names
-        state_names = Sim_Utils.check_state_names(self.__num_states, state_names)
+        state_names = Sim_Utils.check_state_names(self.__num_states, state_names, abbreviation=self.state_abbreviation)
         #Creating Data Storage For Truth State Data
         self.state_data = Data_Storage(variable_names=state_names, initial_values=initial_state, next_time=next_time, num_stored_steps=num_stored_steps, name="truth_state_data")
         
@@ -69,7 +85,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             self.__valid_control = True
             self.__num_control = initial_control.size
             self.__current_control = initial_control
-            control_names = Sim_Utils.check_state_names(self.__num_control, control_names)
+            control_names = Sim_Utils.check_state_names(self.__num_control, control_names, abbreviation=self.control_abbreviation)
             self.control_data = Data_Storage(variable_names=control_names, initial_values=initial_control, next_time=next_time, num_stored_steps=num_stored_steps, name="control_data")
 
         #If I have other states, check other state names and create data storage for other states
@@ -77,7 +93,7 @@ class Truth_Component(Time_Varying_Component, ABC):
             self.__valid_other_states = True
             self.__num_other_states = initial_other_states.size
             self.__other_states = initial_other_states
-            other_states_names = Sim_Utils.check_state_names(self.__num_other_states, other_states_names)
+            other_states_names = Sim_Utils.check_state_names(self.__num_other_states, other_states_names, abbreviation=self.other_states_abbreviation)
             self.other_state_data = Data_Storage(variable_names=other_states_names, initial_values=initial_other_states, next_time=next_time, num_stored_steps=num_stored_steps, name="truth_other_state_data")
 
 

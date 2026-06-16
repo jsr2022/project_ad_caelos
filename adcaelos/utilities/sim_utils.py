@@ -55,7 +55,7 @@ class Sim_Utils:
             system_exit(1)
     
     @staticmethod
-    def check_state_names(num_states:int, state_names:list[str] = None) -> dict:
+    def check_state_names(num_states:int, state_names:list[str] = None, abbreviation: str = None) -> dict:
         """
         _Checks to see if the user has provided state names and ensure that they are unique, number matches number of states, 
         and creates a dictionary mapping state indices to state names. If not, creates generic state names in the format s1, s2, etc. 
@@ -92,7 +92,7 @@ class Sim_Utils:
         return state_names
 
     @staticmethod
-    def create_state_names(num_states: int) -> list[str]:
+    def create_state_names(num_states: int, abbreviation: str = None) -> list[str]:
         """
         _Creates generic state names in the format s1, s2, etc. based on the number of states._
 
@@ -106,7 +106,10 @@ class Sim_Utils:
         list[str]
             _a list of generic state names_
         """
-        state_names = [f"s{i+1}" for i in range(num_states)]
+        if abbreviation is None:
+            state_names = [f"s{i+1}" for i in range(num_states)]
+        else:
+            state_names = [f"{abbreviation}_{i+1}" for i in range(num_states)]
         return state_names
 
 
