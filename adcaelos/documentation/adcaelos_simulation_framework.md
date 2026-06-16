@@ -105,6 +105,29 @@ graph TD
 5. **Integrator** - Pluggable numerical methods
 6. **Scheduler** - Manages simulation execution timing
 
+### 4.1 Data_Storage
+
+`Data_Storage` is a standalone component that manages time/value history for post-processing. It is used by `Truth_Component` to store simulation data.
+
+**Architecture:**
+- `Truth_Component` creates three `Data_Storage` instances at initialization:
+  - `state_data` - stores integrable state vector time history
+  - `control_data` - stores control input history (if `valid_control` enabled)
+  - `other_state_data` - stores derived/non-integrated states history (if `valid_other_states` enabled)
+- `Truth_Component` owns current state/control values for integration
+- Each `Data_Storage` owns historical time/value series and index-name mappings
+
+**Key Methods:**
+- `store_data(current_time, data)` - stores time and values; key `0` is time, keys `1..N` correspond to variables in order
+- `get_state_position_2_names()` / `get_variable_names_2_position()` - index-to-name mappings (dictionaries)
+- `convert_state_position_2_names(indices)` / `convert_variable_names_2_position(indices)` - lookup helpers returning lists
+- `get_all_stored_data()` - returns complete time/history dictionary
+- Uses Python `array.array('d')` for memory-efficient storage (not NumPy arrays)
+
+**Implementation Status:**
+- `Data_Storage` is fully implemented and actively used by `Truth_Component`
+- `get_stored_data()` method is a stub (not yet implemented) - intended for future selective label/time filtering
+
 ---
 
 ## Section 5: Current State vs. Goal State
@@ -144,15 +167,6 @@ graph TD
       **[RESOLVED]**
         - **Fix**: Reordered `act()` so `set_next_time()` runs before `calculateOtherStates`,
           ensuring `current_time` always matches the time the newly integrated state represents.
-    - ~~**Numerical Precision** problem with `set_next_time()` inside of `time_varying_component.py`~~ **[RESOLVED]**
-        - ~~leads to scheduler skipping steps or adding additional steps~~
-        - ~~leads to integration problems as either the `dt` or the `currTime` is off~~
-        - **Fix**: Replaced additive accumulation with an integer step counter (`next_time = start_time + step_count / frequency`), eliminating floating-point drift regardless of step count. Added `set_frequency()` with re-anchor support and configurable `end_time_tolerance` in `Scheduler`. See `documentation/plans/DONE_fix_numerical_drift_error.md`.
-- **Enum Misuse**: 
-    - **RESOLVED**: `Scheduler_Priority_Enums` — fixed to `IntEnum` ✅
-    - **STILL EXISTS**: `Integrator_Enums` uses `Flag` with `auto()` — potential misuse
-    - **STILL EXISTS**: `Component_Enums` uses `Flag` with `auto()` — potential misuse  
-    - **STILL EXISTS**: `Scheduler_Enums` uses `Flag` with `auto()` — potential misuse
 - **Abstract Methods**: 
     - **PARTIALLY RESOLVED**: Abstract methods in `Truth_Component` (`statesDot`, `calculateOtherStates`) are properly enforced as `@abstractmethod`. However, `Logic_Component.logicCenter` still has `@abstractmethod` commented out (line 55), making it optional rather than required.
     - **Update needed**: Uncomment `@abstractmethod` decorator for `Logic_Component.logicCenter`
@@ -164,7 +178,6 @@ graph TD
 
 ## Section 7: Pending Decisions
 
-- **Custom Systems**: How to define processing groups?
 - **Dependency Injection**: Not yet implemented
     - consider sub levels of priority in the event class?
     - do I put anything inside of the component_container/entity object?
