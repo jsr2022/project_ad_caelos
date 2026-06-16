@@ -39,14 +39,22 @@ class DummyTVComponent(Time_Varying_Component):
     def act(self) -> None:
         pass
 
-    def set_next_time(self, next_time=None) -> None:
+    def set_next_time(self, next_time=None, next_frequency=None) -> None:
         if next_time is None:
             self.__step_count += 1
             self.next_time = self.__start_counter_time + self.__step_count / self.__frequency
-        else:
+        elif next_time is not None and next_frequency is not None:
             self.__start_counter_time = float(next_time)
             self.__step_count = 0
+            self.__frequency = next_frequency
+            self.__period = 1.0 / next_frequency
             self.next_time = self.__start_counter_time
+        else:
+            raise ValueError(
+                f"Invalid arguments for set_next_time: next_time={next_time}, "
+                f"next_frequency={next_frequency}. Must provide either no arguments "
+                "or both next_time and next_frequency."
+            )
 
     def get_time(self) -> float:
         return self.next_time
@@ -88,7 +96,7 @@ class TestTimeDrift(unittest.TestCase):
         for _ in range(5):
             comp.set_next_time()
         self.assertAlmostEqual(comp.get_time(), 0.5)
-        comp.set_next_time(100.0)
+        comp.set_next_time(100.0, 10)
         self.assertEqual(comp.get_time(), 100.0)
         self.assertEqual(comp.getStepCount(), 0)
         comp.set_next_time()

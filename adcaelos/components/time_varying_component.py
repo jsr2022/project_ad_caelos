@@ -18,6 +18,9 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         # Correctly initialize Base_Component with the proper arguments
         Base_Component.__init__(self, component_type=Component_Enum, name=name, UUID=UUID)
         Connect_Container_Component.__init__(self)
+        # Tracks this component's scheduled execution time.
+        # Advances by exactly 1/frequency seconds on each set_next_time() call.
+        # Also equals the time label of the most recently stored state (after act() completes).
         self.__next_time = float(next_time)
         self.__scheduler_priority_enum = scheduler_priority_enum
         self.__frequency = frequency
@@ -41,6 +44,18 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
         """
         
     def set_next_time(self, next_time: float = None, next_frequency: int = None) -> None:
+        """Advance this component's scheduled time by one period.
+
+        Called at the end of act() (after integration and state update) to record that
+        the component has completed one step.  After this call:
+          - get_time() returns the time the just-computed state represents
+          - get_time() is also the time the scheduler will use for the next event
+
+        Args:
+            next_time / next_frequency: Both must be provided together to re-anchor the
+                integer step counter at a new time with a new frequency (used for
+                non-fixed-step overrides).  Providing only one raises ValueError.
+        """
         if next_time is None:
             self.__step_count += 1
             self.__next_time = self.__start_counter_time + self.__step_count / self.__frequency
@@ -56,6 +71,15 @@ class Time_Varying_Component(Base_Component, Connect_Container_Component, ABC):
             raise ValueError(error_message)
 
     def get_time(self) -> float:
+        """Return this component's current scheduled execution time.
+
+        Before act() is called this equals the time the component will integrate *from*.
+        After set_next_time() is called inside act() it equals:
+          - the time the newly integrated state was computed *at*, AND
+          - the time this component will be scheduled to execute *next*.
+        Both interpretations are numerically identical; the field advances by exactly one
+        period per call to set_next_time().
+        """
         return self.__next_time
     
     def get_frequency(self) -> int:

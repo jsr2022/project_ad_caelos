@@ -118,19 +118,38 @@ class Scheduler():
         """
         return True
     
-    def _time_lte_end(self, t: float) -> bool:
-        """Return True if t is considered <= global_sim_end_time given tolerance."""
+    def _time_lt_end(self, t: float) -> bool:
+        """Return True if t is strictly before global_sim_end_time (with optional tolerance).
+
+        Strict less-than is required because t is the component's *current* scheduled
+        execution time, not the time the integration result will land at.  If t == end_time,
+        act() would integrate one full dt beyond end_time, producing a spurious extra step.
+        The event at end_time is intentionally skipped; the final data point (at end_time) is
+        stored by the *previous* act() call which integrated from (end_time - dt) → end_time.
+
+        When end_time_tolerance is set, events whose time drifted slightly above end_time
+        (i.e., end_time < t < end_time + tolerance) are still allowed to run.  The event at
+        exactly end_time is always skipped, regardless of tolerance, to preserve the invariant
+        above.  With the integer-step-counter in set_next_time(), drift above end_time should
+        not occur in practice, but the tolerance remains as a safety margin.
+        """
         if self.end_time_tolerance is None:
-            return t <= self.global_sim_end_time
-        # Use tolerance (abs) for boundary comparison.
-        # This ensures the final allowed event is not spuriously dropped.
-        return t <= self.global_sim_end_time + self.end_time_tolerance
+            return t < self.global_sim_end_time
+        # Allow t strictly below end_time (normal case), OR t strictly above end_time but
+        # within the tolerance window (float-drift safety margin).  The event at exactly
+        # end_time is excluded from both clauses so it never triggers act().
+        return t < self.global_sim_end_time or (
+            t > self.global_sim_end_time
+            and t < self.global_sim_end_time + self.end_time_tolerance
+        )
 
     def run_simulation(self, SimStuff) -> None:
         while ((self.all_events and self.getTemporarySimulationTerminationCondition())): # and (self.global_sim_slowest_time <= self.global_sim_end_time):
             # we want to continue running events that are behind sim end time even if vehicle has passed the global stop time
             next_event = heapq.heappop(self.all_events)
-            if self._time_lte_end(next_event.component.get_time()):
+            # component.get_time() is the component's *scheduled* execution time (pre-act).
+            # Strict < prevents the boundary event from running act() one step past end_time.
+            if self._time_lt_end(next_event.component.get_time()):
                 # print(f"Executing Event: {next_event.action} at time {next_event.time:.{self.round2Decimals}f}")
                 # Undergo Action
                 next_event.component.act()

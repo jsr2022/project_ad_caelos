@@ -127,8 +127,23 @@ graph TD
 
 - **Scheduler Incomplete**:
     - have current version working
-    - needs improved termination criteria
-    - vehicle specific termination criteria (where to implement?)
+    - ~~needs improved termination criteria (off-by-one extra step)~~ **[RESOLVED]** — see below
+    - vehicle-specific termination criteria (where to implement?) — still open
+    - ~~**Off-by-one extra timestep**: `_time_lte_end` used `<=` so the event at exactly
+      `end_time` was allowed to run `act()`, integrating one full step past the end and
+      storing a spurious data point.~~ **[RESOLVED]**
+        - **Fix**: Changed guard from `<=` to strict `<` and renamed helper to `_time_lt_end`.
+          The event at `end_time` is now skipped; the final data point (at `end_time`) is
+          correctly stored by the previous step which integrated from `(end_time − dt) → end_time`.
+          Note: for variable step sizes, exact endpoint termination requires an additional
+          step-clamping mechanism (future work).
+    - ~~**`calculateOtherStates` time argument mismatch**: `act()` called `calculateOtherStates`
+      before `set_next_time()`, so `current_time` was the *previous* step's time while
+      `current_state` was already the newly integrated state. Silent bug with no runtime impact
+      today (both implementations are `pass`) but would corrupt any future implementation.~~
+      **[RESOLVED]**
+        - **Fix**: Reordered `act()` so `set_next_time()` runs before `calculateOtherStates`,
+          ensuring `current_time` always matches the time the newly integrated state represents.
     - ~~**Numerical Precision** problem with `set_next_time()` inside of `time_varying_component.py`~~ **[RESOLVED]**
         - ~~leads to scheduler skipping steps or adding additional steps~~
         - ~~leads to integration problems as either the `dt` or the `currTime` is off~~

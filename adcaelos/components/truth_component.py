@@ -103,9 +103,12 @@ class Truth_Component(Time_Varying_Component, ABC):
 
     @abstractmethod
     def calculateOtherStates(self, current_state: np.array, current_control: np.array, current_time: float) -> np.array:
+        """Compute derived (non-integrated) states at the newly integrated time step.
+
+        Called by act() after set_next_time(), so current_time equals the time the
+        integrator just advanced *to* (i.e., previous_time + dt).
+        Must be implemented in every subclass.
         """
-        This calculates any states that are not integrated but still need to be updated at each time step
-        Must Be Implemented at the subclass level"""
     
     def checkState(self, current_state: np.array) -> None:
         if current_state.size != self.__num_states:
@@ -156,27 +159,33 @@ class Truth_Component(Time_Varying_Component, ABC):
         return self.__integrator_type
     
     def act(self) -> None:
+        """Integrate one time step and store results.
+
+        Operation order is intentional:
+          1. Integrate: compute new state at (current_time + dt)
+          2. Update state: store the new state on the component
+          3. Advance schedule: set_next_time() so get_time() now equals the new state's time
+          4. Compute derived states: calculateOtherStates receives (new_state, new_time) <- correct
+          5. Store: write state, control, and derived states at the new time
         """
-        Integrates the truth state using the configured integrator.
-        Called by the scheduler during event execution.
-        """
-        # Run the integrator to compute next state
+        # 1 & 2: integrate from current time forward by one period
         state = self.integrator.getNextState(
             fieldObject=self,
             currTime=self.get_time(),
             dt=self.get_period()
         )
-        
-        # Update the internal state
         self.setCurrState(state)
-        
-        # Calculate any non-integrated (derived) states
+
+        # 3: advance schedule — get_time() now returns the time of the newly computed state
+        self.set_next_time()
+
+        # 4: compute any non-integrated derived states at (new_state, new_time)
         if self.__valid_other_states:
             other_states = self.calculateOtherStates(state, self.getCurrCntrl(), self.get_time())
             self.set_other_states(other_states)
-        self.set_next_time() # we just calculated the data at this time step!
+
+        # 5: store state, control, and derived states — all labeled at the new time
         self.store_states()
-        #Set time for next action
         
 
 
