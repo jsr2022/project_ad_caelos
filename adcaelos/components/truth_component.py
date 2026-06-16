@@ -162,11 +162,11 @@ class Truth_Component(Time_Varying_Component, ABC):
         """Integrate one time step and store results.
 
         Operation order is intentional:
-          1. Integrate: compute new state at (current_time + dt)
-          2. Update state: store the new state on the component
-          3. Advance schedule: set_next_time() so get_time() now equals the new state's time
-          4. Compute derived states: calculateOtherStates receives (new_state, new_time) <- correct
-          5. Store: write state, control, and derived states at the new time
+            1. Integrate: compute new state at (current_time + dt)
+            2. Update state: store the new state on the component
+            3. Advance schedule: set_next_time() so get_time() now equals the new state's time
+            4. Compute derived states: calculateOtherStates receives (new_state, new_time) <- correct
+            5. Store: write state, control, and derived states at the new time
         """
         # 1 & 2: integrate from current time forward by one period
         state = self.integrator.getNextState(
