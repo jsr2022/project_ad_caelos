@@ -46,7 +46,7 @@ class Sim_Utils:
             _a list of unique state names that are all lower case_
         """
         state_names = [item.lower() for item in state_names]
-        uniqueStateNames = list(set(state_names))
+        uniqueStateNames = list(dict.fromkeys(state_names))
         if len(state_names) == len(uniqueStateNames):
             return uniqueStateNames
         else:

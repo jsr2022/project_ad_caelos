@@ -2,8 +2,14 @@ import os
 import datetime
 from typing import Union, List, Dict, Optional, Tuple
 
+#Other Packages
+import matplotlib.pyplot as plt
+
+#Local Packages
 from adcaelos.components.container_component import Container_Component
 from adcaelos.components.truth_component import Truth_Component
+
+
 
 
 def extract_truth_components(
@@ -45,10 +51,10 @@ def plot_truth_data(
     legend_loc: str = "best",
     figsize: Tuple[float, float] = (10, 6)
 ) -> Dict[str, object]:
-    try:
-        import matplotlib.pyplot as plt
-    except ImportError:
-        raise ImportError("matplotlib is required for plotting. Install it via 'pip install matplotlib'.")
+    # try:
+    #     import matplotlib.pyplot as plt
+    # except ImportError:
+    #     raise ImportError("matplotlib is required for plotting. Install it via 'pip install matplotlib'.")
     
     if not truth_components:
         return {}
@@ -155,7 +161,7 @@ def save_figures(
         raise ValueError(f"file_format must be one of {valid_formats}")
         
     if use_timestamp:
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.datetime.now().strftime("%m_%d_%y_%H%M%S")
         save_folder = f"{save_folder}_{timestamp}"
         
     abs_save_folder = os.path.abspath(save_folder)

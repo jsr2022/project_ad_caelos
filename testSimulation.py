@@ -6,6 +6,7 @@ from adcaelos.components.logic_component import Logic_Component
 from adcaelos.components.dynamics.spring_mass_damper import SpringMassDamper
 from adcaelos.schedulers.scheduler import Scheduler
 from adcaelos.integrators.integrator_enums import Integrator_Enums
+from adcaelos.plotting.truth_plotting import plot_truth_components
 
 print("=== Spring Mass Damper Simulation Test ===")
 
@@ -70,3 +71,13 @@ print(f"State: {smd.getCurrState()}")
 print(f"Control: {smd.getCurrCntrl()}")
 
 print("\n=== Simulation Complete ===")
+
+
+
+plot_truth_components(
+    container_components=container,
+    show=True,
+    save_plots=True,
+    save_folder="spring_mass_damper_plots",
+    use_timestamp=False
+)
