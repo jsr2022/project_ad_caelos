@@ -1,5 +1,5 @@
 # Project Specific Modifications
-/plotting/*
+*/plotting/*
 
 
 # Source: https://github.com/github/gitignore/blob/main/Python.gitignore
