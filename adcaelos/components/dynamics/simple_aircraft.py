@@ -74,7 +74,7 @@ class Simple_Aircraft(Truth_Component):
         7) combined pitch angle (thetaC = theta0 + theta) [rad]
         8) combined pitch rate (qC = q0 + q) [rad/s]
         9) combined height (hC = h0 - h) [m]"""
-
+        # TODO convert to scientific docstring format
         u       = longStates[0]
         alpha   = longStates[1]
         theta   = longStates[2]
